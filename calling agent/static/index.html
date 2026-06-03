@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeamLease — AI Calling Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .status-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; }
+    .dot-calling  { background:#f59e0b; animation: pulse 1s infinite; }
+    .dot-connected{ background:#10b981; animation: pulse 1s infinite; }
+    .dot-extracting{ background:#6366f1; animation: pulse 1s infinite; }
+    .dot-completed{ background:#10b981; }
+    .dot-failed   { background:#ef4444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13
+             a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0
+             01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="text-lg font-bold text-gray-900">TeamLease AI Calling Agent</h1>
+      <p class="text-xs text-gray-400">Powered by Gemini Live + Sarvam Indian Voice</p>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
+
+    <!-- Call Form -->
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-base font-semibold text-gray-800 mb-5">Initiate Outbound Call</h2>
+      <form id="callForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Full Name *</label>
+          <input id="name" type="text" required placeholder="Rahul Sharma"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Mobile Number *</label>
+          <input id="mobile" type="tel" required placeholder="+919XXXXXXXXX"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Email Address</label>
+          <input id="email" type="email" placeholder="rahul@company.com"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        </div>
+        <div class="sm:col-span-3 flex items-center gap-4">
+          <button type="submit" id="callBtn"
+            class="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Start Call
+          </button>
+          <span id="statusBadge" class="hidden text-sm text-gray-600 flex items-center gap-1"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Live Call Result -->
+    <section id="resultSection" class="hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-base font-semibold text-gray-800">Call Result</h2>
+        <span id="callTypeBadge" class="hidden text-xs font-medium px-2.5 py-1 rounded-full"></span>
+      </div>
+
+      <!-- Summary -->
+      <div id="summaryBox" class="hidden bg-orange-50 border border-orange-100 rounded-lg p-4 mb-5 text-sm text-gray-700"></div>
+
+      <!-- Output table -->
+      <div id="outputTable" class="hidden overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-100 w-48">Field</th>
+              <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-b border-gray-100">Value</th>
+            </tr>
+          </thead>
+          <tbody id="outputBody" class="divide-y divide-gray-50"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Recent Calls -->
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-base font-semibold text-gray-800">Recent Calls</h2>
+        <button onclick="loadRecentCalls()"
+          class="text-xs text-orange-500 hover:text-orange-600 font-medium">Refresh</button>
+      </div>
+      <div id="recentCalls">
+        <p class="text-sm text-gray-400">No calls yet.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let pollTimer = null;
+
+    // ── Form submit ──────────────────────────────────────────────
+    document.getElementById('callForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name   = document.getElementById('name').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const email  = document.getElementById('email').value.trim();
+
+      setBtn(true);
+      setStatus('calling', 'Initiating call...');
+      document.getElementById('resultSection').classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/call/outbound', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: mobile, name, email }),
+        });
+        const data = await res.json();
+        if (data.call_uuid) {
+          startPolling(data.call_uuid);
+        } else {
+          setStatus('failed', 'Failed to initiate — check server logs.');
+          setBtn(false);
+        }
+      } catch (err) {
+        setStatus('failed', 'Network error: ' + err.message);
+        setBtn(false);
+      }
+    });
+
+    // ── Polling ──────────────────────────────────────────────────
+    function startPolling(uuid) {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(() => pollStatus(uuid), 2500);
+    }
+
+    async function pollStatus(uuid) {
+      try {
+        const res = await fetch(`/api/call/status/${uuid}`);
+        const data = await res.json();
+        const s = data.status;
+
+        const messages = {
+          calling:    'Dialling...',
+          connected:  'Call connected — AI agent is live',
+          extracting: 'Call ended — extracting results...',
+          completed:  'Completed',
+          not_found:  'Call not found',
+        };
+        setStatus(s, messages[s] || s);
+
+        if (s === 'completed') {
+          clearInterval(pollTimer);
+          setBtn(false);
+          showResult(data);
+          loadRecentCalls();
+        } else if (s === 'not_found' || s === 'failed') {
+          clearInterval(pollTimer);
+          setBtn(false);
+        }
+      } catch (_) {}
+    }
+
+    // ── Result display ───────────────────────────────────────────
+    function showResult(data) {
+      const sec = document.getElementById('resultSection');
+      sec.classList.remove('hidden');
+
+      // Call type badge
+      const badge = document.getElementById('callTypeBadge');
+      const typeColors = { business: 'bg-green-100 text-green-700', candidate: 'bg-blue-100 text-blue-700', associate: 'bg-purple-100 text-purple-700' };
+      badge.textContent = (data.call_type || 'unknown').toUpperCase();
+      badge.className = `text-xs font-medium px-2.5 py-1 rounded-full ${typeColors[data.call_type] || 'bg-gray-100 text-gray-600'}`;
+      badge.classList.remove('hidden');
+
+      // Summary
+      if (data.summary) {
+        const sb = document.getElementById('summaryBox');
+        sb.textContent = data.summary;
+        sb.classList.remove('hidden');
+      }
+
+      // Output table
+      const output = data.output;
+      if (output && !output.error) {
+        const labels = {
+          company_name: 'Company Name',
+          person_name: 'Person Name',
+          person_designation: 'Designation',
+          person_email: 'Email',
+          person_phone: 'Phone',
+          contract_staffing_required: 'Contract Staffing Required',
+          contract_staffing_mode: 'Staffing Mode',
+          number_of_staff: 'Number of Staff',
+          roles_of_staff: 'Roles',
+          experience_of_roles: 'Experience',
+          salary_of_roles: 'Salary Range',
+          location_of_roles: 'Locations',
+          other_requirements: 'Other Requirements',
+        };
+        const tbody = document.getElementById('outputBody');
+        tbody.innerHTML = '';
+        for (const [key, label] of Object.entries(labels)) {
+          const val = output[key];
+          if (val === null || val === undefined || val === '') continue;
+          const display = Array.isArray(val) ? val.join(', ') : String(val);
+          tbody.insertAdjacentHTML('beforeend', `
+            <tr>
+              <td class="px-3 py-2 text-xs font-medium text-gray-500">${label}</td>
+              <td class="px-3 py-2 text-sm text-gray-800">${display}</td>
+            </tr>`);
+        }
+        document.getElementById('outputTable').classList.remove('hidden');
+      }
+    }
+
+    // ── Recent calls table ───────────────────────────────────────
+    async function loadRecentCalls() {
+      const container = document.getElementById('recentCalls');
+      try {
+        const res = await fetch('/api/calls');
+        const logs = await res.json();
+        if (!logs.length) {
+          container.innerHTML = '<p class="text-sm text-gray-400">No calls yet.</p>';
+          return;
+        }
+        const typeColors = { business: 'bg-green-100 text-green-700', candidate: 'bg-blue-100 text-blue-700', associate: 'bg-purple-100 text-purple-700' };
+        const rows = logs.map(c => {
+          const lead = c.lead || {};
+          const dt = new Date(c.timestamp).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+          const badge = c.call_type
+            ? `<span class="text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[c.call_type] || 'bg-gray-100 text-gray-600'}">${c.call_type}</span>`
+            : '<span class="text-gray-400 text-xs">—</span>';
+          const cs = c.output?.contract_staffing_required;
+          const csCell = cs ? (cs === 'yes' ? '✅ Yes' : '❌ No') : '—';
+          const roles = c.output?.roles_of_staff;
+          const rolesCell = roles ? (Array.isArray(roles) ? roles.join(', ') : roles) : '—';
+          return `<tr class="border-b border-gray-50 hover:bg-gray-50">
+            <td class="px-3 py-2.5 text-xs text-gray-500 whitespace-nowrap">${dt}</td>
+            <td class="px-3 py-2.5 text-sm font-medium text-gray-800">${lead.name || '—'}</td>
+            <td class="px-3 py-2.5 text-sm text-gray-600">${lead.phone || '—'}</td>
+            <td class="px-3 py-2.5">${badge}</td>
+            <td class="px-3 py-2.5 text-sm text-gray-600">${csCell}</td>
+            <td class="px-3 py-2.5 text-sm text-gray-600 max-w-xs truncate">${rolesCell}</td>
+          </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-50">
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Date/Time</th>
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Name</th>
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Phone</th>
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Type</th>
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Contract Staffing</th>
+                  <th class="text-left px-3 py-2 text-xs font-semibold text-gray-500">Roles</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+      } catch (_) {
+        container.innerHTML = '<p class="text-sm text-red-400">Failed to load.</p>';
+      }
+    }
+
+    // ── UI helpers ───────────────────────────────────────────────
+    function setStatus(state, msg) {
+      const badge = document.getElementById('statusBadge');
+      const dotClass = {
+        calling: 'dot-calling', connected: 'dot-connected',
+        extracting: 'dot-extracting', completed: 'dot-completed', failed: 'dot-failed',
+      }[state] || 'dot-calling';
+      badge.innerHTML = `<span class="status-dot ${dotClass}"></span>${msg}`;
+      badge.classList.remove('hidden');
+    }
+
+    function setBtn(disabled) {
+      const btn = document.getElementById('callBtn');
+      btn.disabled = disabled;
+      btn.textContent = disabled ? 'In Progress...' : 'Start Call';
+    }
+
+    // Load recent calls on page open
+    loadRecentCalls();
+  </script>
+</body>
+</html>

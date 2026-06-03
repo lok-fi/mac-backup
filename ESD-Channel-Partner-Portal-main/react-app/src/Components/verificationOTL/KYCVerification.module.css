@@ -1,0 +1,119 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* Gradient / color fading background (like image) */
+  background: linear-gradient(
+    180deg,
+    #ff4f00 0%,
+    #ff7a18 45%,
+    #ff9f45 100%
+  );
+}
+
+.header {
+  margin-top: 50px;
+  text-align: center;
+  color: #fff;
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.header p {
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+.card {
+  margin-top: 40px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  padding: 30px;
+  width: 420px;
+  max-width: 90%;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.pending {
+  background: rgba(150, 150, 150, 0.35);
+  color: #fff;
+}
+
+.verified {
+  background: #1fbf75;
+  color: #fff;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.text {
+  font-size: 15px;
+}
+
+.continueBtn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  background: #000;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+.continueBtn:hover {
+  background: #222;
+}
+/*icon rotating*/
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.loadingIcon {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

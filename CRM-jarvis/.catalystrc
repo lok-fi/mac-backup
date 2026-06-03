@@ -1,0 +1,30 @@
+{
+  "defaults": {
+    "project": 1,
+    "env": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "17682000001808370",
+      "name": "CRM-whatsapp",
+      "domain": {
+        "id": "50042577969",
+        "name": "crm-whatsapp-60040289923.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60040289923",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

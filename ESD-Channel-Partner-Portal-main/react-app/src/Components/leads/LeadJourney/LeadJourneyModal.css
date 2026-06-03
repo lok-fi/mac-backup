@@ -1,0 +1,442 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #ff6b35;
+  --success: #10b981;
+  --danger: #ef4444;
+  --bg-body: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e5e7eb;
+}
+
+/* ================= PAGE ================= */
+
+.lj-page {
+  background: var(--bg-body);
+  min-height: calc(100vh - 60px);
+  padding: 24px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text-main);
+}
+
+.lj-single-column {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ================= CARD ================= */
+
+.lj-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 24px;
+}
+
+.lj-card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+/* this is for the laodinf effect */
+/* FULL SCREEN CENTER */
+.lj-loading {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  font-family: "Inter", sans-serif;
+}
+
+/* TEXT */
+.lj-loading p {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+}
+
+/* YOUR LOADER (FIXED COLOR) */
+.loader {
+  color: #ff6b00; /* 🔥 changed from white → your theme */
+  font-size: 10px;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  animation: mulShdSpin 1.3s infinite linear;
+  transform: translateZ(0);
+}
+
+/* ANIMATION (UNCHANGED) */
+@keyframes mulShdSpin {
+  0%, 100% {
+    box-shadow: 0 -3em 0 0.2em,
+      2em -2em 0 0em, 3em 0 0 -1em,
+      2em 2em 0 -1em, 0 3em 0 -1em,
+      -2em 2em 0 -1em, -3em 0 0 -1em,
+      -2em -2em 0 0;
+  }
+  12.5% {
+    box-shadow: 0 -3em 0 0,
+      2em -2em 0 0.2em,
+      3em 0 0 0,
+      2em 2em 0 -1em,
+      0 3em 0 -1em,
+      -2em 2em 0 -1em,
+      -3em 0 0 -1em,
+      -2em -2em 0 -1em;
+  }
+  25% {
+    box-shadow: 0 -3em 0 -0.5em,
+      2em -2em 0 0,
+      3em 0 0 0.2em,
+      2em 2em 0 0,
+      0 3em 0 -1em,
+      -2em 2em 0 -1em,
+      -3em 0 0 -1em,
+      -2em -2em 0 -1em;
+  }
+  37.5% {
+    box-shadow: 0 -3em 0 -1em,
+      2em -2em 0 -1em,
+      3em 0 0 0,
+      2em 2em 0 0.2em,
+      0 3em 0 0,
+      -2em 2em 0 -1em,
+      -3em 0 0 -1em,
+      -2em -2em 0 -1em;
+  }
+  50% {
+    box-shadow: 0 -3em 0 -1em,
+      2em -2em 0 -1em,
+      3em 0 0 -1em,
+      2em 2em 0 0,
+      0 3em 0 0.2em,
+      -2em 2em 0 0,
+      -3em 0 0 -1em,
+      -2em -2em 0 -1em;
+  }
+  62.5% {
+    box-shadow: 0 -3em 0 -1em,
+      2em -2em 0 -1em,
+      3em 0 0 -1em,
+      2em 2em 0 -1em,
+      0 3em 0 0,
+      -2em 2em 0 0.2em,
+      -3em 0 0 0,
+      -2em -2em 0 -1em;
+  }
+  75% {
+    box-shadow: 0 -3em 0 -1em,
+      2em -2em 0 -1em,
+      3em 0 0 -1em,
+      2em 2em 0 -1em,
+      0 3em 0 -1em,
+      -2em 2em 0 0,
+      -3em 0 0 0.2em,
+      -2em -2em 0 0;
+  }
+  87.5% {
+    box-shadow: 0 -3em 0 0,
+      2em -2em 0 -1em,
+      3em 0 0 -1em,
+      2em 2em 0 -1em,
+      0 3em 0 -1em,
+      -2em 2em 0 0,
+      -3em 0 0 0,
+      -2em -2em 0 0.2em;
+  }
+}
+/* ================= TOP NAV ================= */
+
+.lj-top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lj-back-link {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.lj-back-link:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ================= JOURNEY PIPELINE ================= */
+
+.lj-pipeline-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  padding-top: 10px;
+}
+
+.pipeline-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.pipeline-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e5e7eb;
+  z-index: 0;
+}
+
+.pipeline-step.done:not(:last-child)::after {
+  background: var(--success);
+}
+
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 auto 8px auto;
+  z-index: 2;
+  position: relative;
+}
+
+.pipeline-step.done .step-circle {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.pipeline-step.current .step-circle {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pipeline-step.rejected .step-circle {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+.pipeline-step.rejected {
+  background: transparent;
+  border: none;
+}
+.step-reason {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626; /* red */
+  font-weight: 500;
+}
+/* ================= STEP INFO ================= */
+
+.step-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+/* Step Title */
+.step-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* Step Date   background: #6fa4ed*/
+.step-date {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1f2226;
+ 
+  padding: 4px 8px;
+  border-radius: 20px;
+  display: inline-block;
+  letter-spacing: 0.3px;
+}
+/* ================= PROFILE HERO ================= */
+
+.lj-profile-hero {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.lj-avatar-large {
+  width: 56px;
+  height: 56px;
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lj-profile-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lj-profile-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ================= CONTACT GRID ================= */
+
+.lj-contact-grid {
+  display: flex;
+  gap: 28px;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.contact-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ================= SECTION DIVIDER ================= */
+
+.lj-section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+/* ================= DATA GRID ================= */
+
+.data-group {
+  margin-bottom: 28px;
+}
+
+.group-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.data-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.info-box {
+  background: #f9fafb;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #eef2f7;
+}
+
+.info-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.info-tag {
+  background: var(--primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+  .data-grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .lj-profile-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lj-profile-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .lj-contact-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .data-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lj-pipeline-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .pipeline-step {
+    text-align: left;
+  }
+
+  .pipeline-step:not(:last-child)::after {
+    display: none;
+  }
+}

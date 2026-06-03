@@ -1,0 +1,3013 @@
+[
+  {
+    "call_sid": "CAa4bb452a72eba04d9b18df6c620a453f",
+    "timestamp": "2026-05-08T18:58:12.551514",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "about"
+      },
+      {
+        "role": "assistant",
+        "text": "your callback"
+      },
+      {
+        "role": "assistant",
+        "text": "request."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time?"
+      },
+      {
+        "role": "user",
+        "text": "Yes. Hello."
+      },
+      {
+        "role": "assistant",
+        "text": "Great. Are"
+      },
+      {
+        "role": "assistant",
+        "text": "you looking"
+      },
+      {
+        "role": "assistant",
+        "text": "for contract"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "— where"
+      },
+      {
+        "role": "assistant",
+        "text": "people"
+      },
+      {
+        "role": "assistant",
+        "text": "work"
+      },
+      {
+        "role": "assistant",
+        "text": "under"
+      },
+      {
+        "role": "assistant",
+        "text": "your"
+      },
+      {
+        "role": "assistant",
+        "text": "supervision"
+      },
+      {
+        "role": "assistant",
+        "text": "but"
+      },
+      {
+        "role": "assistant",
+        "text": "on"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease's"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll?"
+      },
+      {
+        "role": "user",
+        "text": "Yes yes."
+      },
+      {
+        "role": "assistant",
+        "text": "Okay. Would"
+      },
+      {
+        "role": "assistant",
+        "text": "you like"
+      },
+      {
+        "role": "assistant",
+        "text": "to transfer"
+      },
+      {
+        "role": "assistant",
+        "text": "existing"
+      },
+      {
+        "role": "assistant",
+        "text": "staff"
+      },
+      {
+        "role": "assistant",
+        "text": "to TeamLease's"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll,"
+      },
+      {
+        "role": "assistant",
+        "text": "or"
+      },
+      {
+        "role": "assistant",
+        "text": "should"
+      },
+      {
+        "role": "assistant",
+        "text": "we hire"
+      },
+      {
+        "role": "assistant",
+        "text": "and deploy"
+      },
+      {
+        "role": "assistant",
+        "text": "new"
+      },
+      {
+        "role": "assistant",
+        "text": "people"
+      },
+      {
+        "role": "assistant",
+        "text": "for you?"
+      },
+      {
+        "role": "assistant",
+        "text": "Also,"
+      },
+      {
+        "role": "assistant",
+        "text": "could"
+      },
+      {
+        "role": "assistant",
+        "text": "you tell"
+      },
+      {
+        "role": "assistant",
+        "text": "me about"
+      },
+      {
+        "role": "assistant",
+        "text": "the roles,"
+      },
+      {
+        "role": "assistant",
+        "text": "headcount,"
+      },
+      {
+        "role": "assistant",
+        "text": "and locations?"
+      },
+      {
+        "role": "user",
+        "text": "Yeah, deploy new people."
+      },
+      {
+        "role": "assistant",
+        "text": "Got it."
+      },
+      {
+        "role": "assistant",
+        "text": "And"
+      },
+      {
+        "role": "assistant",
+        "text": "what's"
+      },
+      {
+        "role": "assistant",
+        "text": "the salary"
+      },
+      {
+        "role": "assistant",
+        "text": "range"
+      },
+      {
+        "role": "assistant",
+        "text": "and onboarding"
+      },
+      {
+        "role": "assistant",
+        "text": "timeline?"
+      },
+      {
+        "role": "assistant",
+        "text": "Also,"
+      },
+      {
+        "role": "assistant",
+        "text": "what's"
+      },
+      {
+        "role": "assistant",
+        "text": "your"
+      },
+      {
+        "role": "assistant",
+        "text": "role"
+      },
+      {
+        "role": "assistant",
+        "text": "and who"
+      },
+      {
+        "role": "assistant",
+        "text": "signs"
+      },
+      {
+        "role": "assistant",
+        "text": "off on"
+      },
+      {
+        "role": "assistant",
+        "text": "this?"
+      },
+      {
+        "role": "assistant",
+        "text": "I'm passing"
+      },
+      {
+        "role": "assistant",
+        "text": "this to"
+      },
+      {
+        "role": "assistant",
+        "text": "our staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "expert"
+      },
+      {
+        "role": "assistant",
+        "text": "now."
+      },
+      {
+        "role": "user",
+        "text": "Tem. Ah, around 3 to 4 LPA."
+      },
+      {
+        "role": "assistant",
+        "text": "Okay, understood."
+      },
+      {
+        "role": "assistant",
+        "text": "And"
+      },
+      {
+        "role": "assistant",
+        "text": "what's"
+      },
+      {
+        "role": "assistant",
+        "text": "your"
+      },
+      {
+        "role": "assistant",
+        "text": "role"
+      },
+      {
+        "role": "assistant",
+        "text": "in the"
+      },
+      {
+        "role": "assistant",
+        "text": "process,"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "who"
+      },
+      {
+        "role": "assistant",
+        "text": "signs"
+      },
+      {
+        "role": "assistant",
+        "text": "off on"
+      },
+      {
+        "role": "assistant",
+        "text": "these"
+      },
+      {
+        "role": "assistant",
+        "text": "decisions?"
+      },
+      {
+        "role": "assistant",
+        "text": "I'm passing"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "to our"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "expert"
+      },
+      {
+        "role": "assistant",
+        "text": "now"
+      },
+      {
+        "role": "assistant",
+        "text": "— you'll"
+      },
+      {
+        "role": "assistant",
+        "text": "hear"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "us very"
+      },
+      {
+        "role": "assistant",
+        "text": "shortly."
+      },
+      {
+        "role": "user",
+        "text": "I am Chinna Devalkar."
+      },
+      {
+        "role": "assistant",
+        "text": "Thank you,"
+      },
+      {
+        "role": "assistant",
+        "text": "Chinna."
+      },
+      {
+        "role": "assistant",
+        "text": "I've"
+      },
+      {
+        "role": "assistant",
+        "text": "noted"
+      },
+      {
+        "role": "assistant",
+        "text": "these"
+      },
+      {
+        "role": "assistant",
+        "text": "details"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "will have"
+      },
+      {
+        "role": "assistant",
+        "text": "the staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "expert"
+      },
+      {
+        "role": "assistant",
+        "text": "reach"
+      },
+      {
+        "role": "assistant",
+        "text": "out to"
+      },
+      {
+        "role": "assistant",
+        "text": "you very"
+      },
+      {
+        "role": "assistant",
+        "text": "soon."
+      },
+      {
+        "role": "assistant",
+        "text": "Thank"
+      },
+      {
+        "role": "assistant",
+        "text": "you for"
+      },
+      {
+        "role": "assistant",
+        "text": "your time!"
+      },
+      {
+        "role": "user",
+        "text": "I need"
+      },
+      {
+        "role": "assistant",
+        "text": "You're welcome!"
+      },
+      {
+        "role": "assistant",
+        "text": "The expert"
+      },
+      {
+        "role": "assistant",
+        "text": "will be"
+      },
+      {
+        "role": "assistant",
+        "text": "in touch"
+      },
+      {
+        "role": "assistant",
+        "text": "shortly."
+      },
+      {
+        "role": "assistant",
+        "text": "Have"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "day."
+      },
+      {
+        "role": "user",
+        "text": "1 दिन में और बीच में ईएसआईसी का घुसाया था, उसका घुसाया था।"
+      },
+      {
+        "role": "assistant",
+        "text": "The expert"
+      },
+      {
+        "role": "assistant",
+        "text": "will be"
+      },
+      {
+        "role": "assistant",
+        "text": "in touch"
+      },
+      {
+        "role": "assistant",
+        "text": "shortly"
+      },
+      {
+        "role": "assistant",
+        "text": "to discuss"
+      },
+      {
+        "role": "assistant",
+        "text": "the details"
+      },
+      {
+        "role": "assistant",
+        "text": "with you."
+      },
+      {
+        "role": "assistant",
+        "text": "Have a"
+      },
+      {
+        "role": "assistant",
+        "text": "great"
+      },
+      {
+        "role": "assistant",
+        "text": "day!"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Chinna Devalkar",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": "yes",
+      "contract_staffing_mode": "hire",
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": "3 to 4 LPA",
+      "location_of_roles": null,
+      "other_requirements": "The caller mentioned a requirement regarding ESIC.",
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "The prospect, identified as Chinna Devalkar, is looking for contract staffing services specifically to hire and deploy new personnel. He specified a salary range of 3 to 4 LPA and mentioned requirements related to ESIC. The agent has gathered these details and will have a staffing expert follow up with him."
+  },
+  {
+    "call_sid": "CA5fcb0fcc843c9d900fff1b2b0c88b2e6",
+    "timestamp": "2026-05-08T18:31:38.519497",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is"
+      },
+      {
+        "role": "assistant",
+        "text": "Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease"
+      },
+      {
+        "role": "assistant",
+        "text": "— calling"
+      },
+      {
+        "role": "assistant",
+        "text": "about"
+      },
+      {
+        "role": "assistant",
+        "text": "your callback"
+      },
+      {
+        "role": "assistant",
+        "text": "request."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time?"
+      },
+      {
+        "role": "user",
+        "text": "Yes, please tell me."
+      },
+      {
+        "role": "assistant",
+        "text": "Great! Are"
+      },
+      {
+        "role": "assistant",
+        "text": "you looking"
+      },
+      {
+        "role": "assistant",
+        "text": "for contract"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "— where"
+      },
+      {
+        "role": "assistant",
+        "text": "people"
+      },
+      {
+        "role": "assistant",
+        "text": "work"
+      },
+      {
+        "role": "assistant",
+        "text": "under"
+      },
+      {
+        "role": "assistant",
+        "text": "your supervision"
+      },
+      {
+        "role": "assistant",
+        "text": "but"
+      },
+      {
+        "role": "assistant",
+        "text": "on TeamLease's"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll?"
+      },
+      {
+        "role": "user",
+        "text": "Estoy por el área de chechos."
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease also"
+      },
+      {
+        "role": "assistant",
+        "text": "covers"
+      },
+      {
+        "role": "assistant",
+        "text": "apprenticeships,"
+      },
+      {
+        "role": "assistant",
+        "text": "permanent"
+      },
+      {
+        "role": "assistant",
+        "text": "hiring,"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll"
+      },
+      {
+        "role": "assistant",
+        "text": "& compliance,"
+      },
+      {
+        "role": "assistant",
+        "text": "HRMS,"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "learning"
+      },
+      {
+        "role": "assistant",
+        "text": "solutions."
+      },
+      {
+        "role": "assistant",
+        "text": "What specifically"
+      },
+      {
+        "role": "assistant",
+        "text": "are you"
+      },
+      {
+        "role": "assistant",
+        "text": "looking"
+      },
+      {
+        "role": "assistant",
+        "text": "for?"
+      },
+      {
+        "role": "user",
+        "text": "preparamos"
+      },
+      {
+        "role": "assistant",
+        "text": "I've noted"
+      },
+      {
+        "role": "assistant",
+        "text": "that"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "will"
+      },
+      {
+        "role": "assistant",
+        "text": "have"
+      },
+      {
+        "role": "assistant",
+        "text": "the right"
+      },
+      {
+        "role": "assistant",
+        "text": "expert"
+      },
+      {
+        "role": "assistant",
+        "text": "reach"
+      },
+      {
+        "role": "assistant",
+        "text": "out."
+      },
+      {
+        "role": "assistant",
+        "text": "Thank"
+      },
+      {
+        "role": "assistant",
+        "text": "you!"
+      },
+      {
+        "role": "user",
+        "text": "¿Dónde?"
+      },
+      {
+        "role": "assistant",
+        "text": "You're welcome!"
+      },
+      {
+        "role": "assistant",
+        "text": "Have"
+      },
+      {
+        "role": "assistant",
+        "text": "a great"
+      },
+      {
+        "role": "assistant",
+        "text": "day."
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": "The caller provided unclear responses in Spanish regarding their requirements and locations.",
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "The agent reached out to Lok Nagendra regarding a callback request. The caller provided unclear responses in Spanish, so the agent noted the interest and promised to have an expert follow up with more information."
+  },
+  {
+    "call_sid": "CA54a507f231d966adb10c75869b83da53",
+    "timestamp": "2026-05-08T18:18:04.973011",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      },
+      {
+        "role": "user",
+        "text": "Yes."
+      },
+      {
+        "role": "assistant",
+        "text": "Great! To"
+      },
+      {
+        "role": "assistant",
+        "text": "make"
+      },
+      {
+        "role": "assistant",
+        "text": "sure"
+      },
+      {
+        "role": "assistant",
+        "text": "I connect"
+      },
+      {
+        "role": "assistant",
+        "text": "you with"
+      },
+      {
+        "role": "assistant",
+        "text": "the right"
+      },
+      {
+        "role": "assistant",
+        "text": "expert"
+      },
+      {
+        "role": "assistant",
+        "text": "— are you"
+      },
+      {
+        "role": "assistant",
+        "text": "looking"
+      },
+      {
+        "role": "assistant",
+        "text": "to have"
+      },
+      {
+        "role": "user",
+        "text": "Hello."
+      },
+      {
+        "role": "assistant",
+        "text": "Sorry, I"
+      },
+      {
+        "role": "assistant",
+        "text": "got"
+      },
+      {
+        "role": "assistant",
+        "text": "cut"
+      },
+      {
+        "role": "assistant",
+        "text": "off"
+      },
+      {
+        "role": "assistant",
+        "text": "there."
+      },
+      {
+        "role": "assistant",
+        "text": "To make"
+      },
+      {
+        "role": "assistant",
+        "text": "sure"
+      },
+      {
+        "role": "assistant",
+        "text": "I connect"
+      },
+      {
+        "role": "assistant",
+        "text": "you with"
+      },
+      {
+        "role": "assistant",
+        "text": "the right"
+      },
+      {
+        "role": "assistant",
+        "text": "expert —"
+      },
+      {
+        "role": "assistant",
+        "text": "are you"
+      },
+      {
+        "role": "assistant",
+        "text": "looking"
+      },
+      {
+        "role": "assistant",
+        "text": "to have"
+      },
+      {
+        "role": "assistant",
+        "text": "employees"
+      },
+      {
+        "role": "assistant",
+        "text": "on a"
+      },
+      {
+        "role": "assistant",
+        "text": "contract"
+      },
+      {
+        "role": "assistant",
+        "text": "basis,"
+      },
+      {
+        "role": "assistant",
+        "text": "where they're"
+      },
+      {
+        "role": "assistant",
+        "text": "on TeamLease's"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll"
+      },
+      {
+        "role": "assistant",
+        "text": "but"
+      },
+      {
+        "role": "assistant",
+        "text": "work"
+      },
+      {
+        "role": "assistant",
+        "text": "directly"
+      },
+      {
+        "role": "assistant",
+        "text": "under"
+      },
+      {
+        "role": "assistant",
+        "text": "your supervision?"
+      },
+      {
+        "role": "user",
+        "text": "Please tell me about the service."
+      },
+      {
+        "role": "assistant",
+        "text": "Sure, we"
+      },
+      {
+        "role": "assistant",
+        "text": "handle"
+      },
+      {
+        "role": "assistant",
+        "text": "contract"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing,"
+      },
+      {
+        "role": "assistant",
+        "text": "permanent"
+      },
+      {
+        "role": "assistant",
+        "text": "hiring,"
+      },
+      {
+        "role": "assistant",
+        "text": "apprenticeships,"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll,"
+      },
+      {
+        "role": "assistant",
+        "text": "compliance,"
+      },
+      {
+        "role": "assistant",
+        "text": "and HR"
+      },
+      {
+        "role": "assistant",
+        "text": "software,"
+      },
+      {
+        "role": "assistant",
+        "text": "among"
+      },
+      {
+        "role": "assistant",
+        "text": "other"
+      },
+      {
+        "role": "assistant",
+        "text": "solutions."
+      },
+      {
+        "role": "assistant",
+        "text": "To help"
+      },
+      {
+        "role": "assistant",
+        "text": "me connect"
+      },
+      {
+        "role": "assistant",
+        "text": "you with"
+      },
+      {
+        "role": "assistant",
+        "text": "the right"
+      },
+      {
+        "role": "assistant",
+        "text": "person,"
+      },
+      {
+        "role": "assistant",
+        "text": "are"
+      },
+      {
+        "role": "assistant",
+        "text": "you looking"
+      },
+      {
+        "role": "assistant",
+        "text": "for contract"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing"
+      },
+      {
+        "role": "assistant",
+        "text": "specifically?"
+      },
+      {
+        "role": "user",
+        "text": "And now tell me about the contract staffing."
+      },
+      {
+        "role": "assistant",
+        "text": "Under contract"
+      },
+      {
+        "role": "assistant",
+        "text": "staffing,"
+      },
+      {
+        "role": "assistant",
+        "text": "employees"
+      },
+      {
+        "role": "assistant",
+        "text": "are on"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease's"
+      },
+      {
+        "role": "assistant",
+        "text": "payroll"
+      },
+      {
+        "role": "assistant",
+        "text": "but"
+      },
+      {
+        "role": "assistant",
+        "text": "work"
+      },
+      {
+        "role": "assistant",
+        "text": "directly"
+      },
+      {
+        "role": "assistant",
+        "text": "under"
+      },
+      {
+        "role": "assistant",
+        "text": "your supervision."
+      },
+      {
+        "role": "assistant",
+        "text": "Are you"
+      },
+      {
+        "role": "assistant",
+        "text": "interested"
+      },
+      {
+        "role": "assistant",
+        "text": "in transferring"
+      },
+      {
+        "role": "assistant",
+        "text": "people"
+      },
+      {
+        "role": "assistant",
+        "text": "already"
+      },
+      {
+        "role": "assistant",
+        "text": "with"
+      },
+      {
+        "role": "assistant",
+        "text": "you,"
+      },
+      {
+        "role": "assistant",
+        "text": "or"
+      },
+      {
+        "role": "assistant",
+        "text": "would you"
+      },
+      {
+        "role": "assistant",
+        "text": "like"
+      },
+      {
+        "role": "assistant",
+        "text": "us to"
+      },
+      {
+        "role": "assistant",
+        "text": "hire"
+      },
+      {
+        "role": "assistant",
+        "text": "for you?"
+      },
+      {
+        "role": "user",
+        "text": "Mine is an hiring company so can you please explain this? process to me"
+      },
+      {
+        "role": "assistant",
+        "text": "Sure, you"
+      },
+      {
+        "role": "assistant",
+        "text": "can"
+      },
+      {
+        "role": "assistant",
+        "text": "outsource"
+      },
+      {
+        "role": "assistant",
+        "text": "the hiring"
+      },
+      {
+        "role": "assistant",
+        "text": "to us,"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "we'll pay"
+      },
+      {
+        "role": "assistant",
+        "text": "the employees"
+      },
+      {
+        "role": "assistant",
+        "text": "and manage"
+      },
+      {
+        "role": "assistant",
+        "text": "all their"
+      },
+      {
+        "role": "assistant",
+        "text": "compliance."
+      },
+      {
+        "role": "assistant",
+        "text": "Could"
+      },
+      {
+        "role": "assistant",
+        "text": "you tell"
+      },
+      {
+        "role": "assistant",
+        "text": "me what"
+      },
+      {
+        "role": "assistant",
+        "text": "roles"
+      },
+      {
+        "role": "assistant",
+        "text": "you're looking"
+      },
+      {
+        "role": "assistant",
+        "text": "to fill,"
+      },
+      {
+        "role": "assistant",
+        "text": "how many"
+      },
+      {
+        "role": "assistant",
+        "text": "people"
+      },
+      {
+        "role": "assistant",
+        "text": "you need,"
+      },
+      {
+        "role": "assistant",
+        "text": "and"
+      },
+      {
+        "role": "assistant",
+        "text": "which"
+      },
+      {
+        "role": "assistant",
+        "text": "locations?"
+      },
+      {
+        "role": "user",
+        "text": "I am looking for the developer role and I need three candidates. For the Pune location."
+      },
+      {
+        "role": "assistant",
+        "text": "Got it,"
+      },
+      {
+        "role": "assistant",
+        "text": "three"
+      },
+      {
+        "role": "assistant",
+        "text": "developers"
+      },
+      {
+        "role": "assistant",
+        "text": "in Pune."
+      },
+      {
+        "role": "assistant",
+        "text": "What's"
+      },
+      {
+        "role": "assistant",
+        "text": "the approximate"
+      },
+      {
+        "role": "assistant",
+        "text": "salary"
+      },
+      {
+        "role": "assistant",
+        "text": "range"
+      },
+      {
+        "role": "assistant",
+        "text": "per month"
+      },
+      {
+        "role": "assistant",
+        "text": "for these"
+      },
+      {
+        "role": "assistant",
+        "text": "roles"
+      },
+      {
+        "role": "assistant",
+        "text": "based"
+      },
+      {
+        "role": "assistant",
+        "text": "on experience?"
+      },
+      {
+        "role": "assistant",
+        "text": "And"
+      },
+      {
+        "role": "assistant",
+        "text": "how soon"
+      },
+      {
+        "role": "assistant",
+        "text": "would you"
+      },
+      {
+        "role": "assistant",
+        "text": "like them"
+      },
+      {
+        "role": "assistant",
+        "text": "onboarded?"
+      },
+      {
+        "role": "user",
+        "text": "Okay, before that, before that can you talk to me in Hindi?"
+      },
+      {
+        "role": "assistant",
+        "text": "I understand,"
+      },
+      {
+        "role": "assistant",
+        "text": "but"
+      },
+      {
+        "role": "assistant",
+        "text": "I'm only"
+      },
+      {
+        "role": "assistant",
+        "text": "able"
+      },
+      {
+        "role": "assistant",
+        "text": "to converse"
+      },
+      {
+        "role": "assistant",
+        "text": "in English"
+      },
+      {
+        "role": "assistant",
+        "text": "on this"
+      },
+      {
+        "role": "assistant",
+        "text": "call."
+      },
+      {
+        "role": "assistant",
+        "text": "Would you"
+      },
+      {
+        "role": "assistant",
+        "text": "prefer"
+      },
+      {
+        "role": "assistant",
+        "text": "to continue,"
+      },
+      {
+        "role": "assistant",
+        "text": "or"
+      },
+      {
+        "role": "assistant",
+        "text": "maybe"
+      },
+      {
+        "role": "assistant",
+        "text": "have"
+      },
+      {
+        "role": "assistant",
+        "text": "us call"
+      },
+      {
+        "role": "assistant",
+        "text": "back"
+      },
+      {
+        "role": "assistant",
+        "text": "with someone"
+      },
+      {
+        "role": "assistant",
+        "text": "who can"
+      },
+      {
+        "role": "assistant",
+        "text": "speak"
+      },
+      {
+        "role": "assistant",
+        "text": "Hindi?"
+      },
+      {
+        "role": "user",
+        "text": "Not be continuing."
+      },
+      {
+        "role": "assistant",
+        "text": "No problem"
+      },
+      {
+        "role": "assistant",
+        "text": "at all!"
+      },
+      {
+        "role": "assistant",
+        "text": "When would"
+      },
+      {
+        "role": "assistant",
+        "text": "be a better"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to call"
+      },
+      {
+        "role": "assistant",
+        "text": "you back?"
+      },
+      {
+        "role": "assistant",
+        "text": "we can"
+      },
+      {
+        "role": "assistant",
+        "text": "arrange"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "Hindi-speaking"
+      },
+      {
+        "role": "assistant",
+        "text": "agent."
+      },
+      {
+        "role": "user",
+        "text": "Tomorrow at 2:30 p.m. Thank you."
+      },
+      {
+        "role": "assistant",
+        "text": "Sure, I'll"
+      },
+      {
+        "role": "assistant",
+        "text": "note"
+      },
+      {
+        "role": "assistant",
+        "text": "that down"
+      },
+      {
+        "role": "assistant",
+        "text": "for tomorrow"
+      },
+      {
+        "role": "assistant",
+        "text": "at 2"
+      },
+      {
+        "role": "assistant",
+        "text": "30"
+      },
+      {
+        "role": "assistant",
+        "text": "PM."
+      },
+      {
+        "role": "assistant",
+        "text": "Thanks"
+      },
+      {
+        "role": "assistant",
+        "text": "so much"
+      },
+      {
+        "role": "assistant",
+        "text": "for your"
+      },
+      {
+        "role": "assistant",
+        "text": "time,"
+      },
+      {
+        "role": "assistant",
+        "text": "we'll talk"
+      },
+      {
+        "role": "assistant",
+        "text": "to you then!"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": "yes",
+      "contract_staffing_mode": "hire",
+      "number_of_staff": 3,
+      "roles_of_staff": [
+        "developer"
+      ],
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": [
+        "Pune"
+      ],
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "The prospect is interested in contract staffing services to hire three developers for their Pune location. The call was paused because the prospect requested a Hindi-speaking agent, and a follow-up call has been scheduled for tomorrow at 2:30 PM."
+  },
+  {
+    "call_sid": "CA85324c29bae457ede4b26a52ca1795c3",
+    "timestamp": "2026-05-08T18:15:24.003212",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is"
+      },
+      {
+        "role": "assistant",
+        "text": "Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Lok Nagendra regarding a callback request for their services. The agent initiated the call to verify availability for a brief discussion."
+  },
+  {
+    "call_sid": "CA73aba47bb739eb55586da8e1fe4719e2",
+    "timestamp": "2026-05-08T18:10:50.236976",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease called Lok Nagendra to follow up on a callback request regarding company services. The call served as an initial introduction to verify availability for a conversation."
+  },
+  {
+    "call_sid": "CAf7bbd22bd8f22c1d41fc84a4ee4fe672",
+    "timestamp": "2026-05-08T17:54:06.358664",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Lok Nagendra to follow up on a recent callback request regarding TeamLease services. The conversation was just beginning, and the agent was checking if it was a convenient time for the prospect to discuss the inquiry."
+  },
+  {
+    "call_sid": "CAebd34f1fbd2a45e14a049893e34d3af9",
+    "timestamp": "2026-05-08T17:46:32.814017",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Lok Nagendra to follow up on a callback request regarding company services. The call was initiated to establish contact and check if the lead was available for a brief discussion."
+  },
+  {
+    "call_sid": "CA0fb765a231c4723279031de56ff60222",
+    "timestamp": "2026-05-08T17:44:56.338521",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Lok Nagendra regarding a recent callback request for their services. The agent attempted to confirm if it was a convenient time to discuss the prospect's needs, but the transcript ends before the prospect could respond."
+  },
+  {
+    "call_sid": "CA87cd069d95d9b6cb90f3823d8fcca05d",
+    "timestamp": "2026-05-08T17:40:08.160103",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Lok"
+      },
+      {
+        "role": "assistant",
+        "text": "Nagendra?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Lok Nagendra",
+      "person_designation": null,
+      "person_email": "nagendrayesuri3@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Lok Nagendra regarding a callback request for their services. The agent initiated the call to confirm availability for a brief discussion."
+  },
+  {
+    "call_sid": "CAc63645a0b29de917be8ce6ecf2acf202",
+    "timestamp": "2026-05-08T17:38:09.642591",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CAbe074636b582dd3bbb2b1db3b578ec67",
+    "timestamp": "2026-05-08T17:37:45.245161",
+    "lead": {
+      "name": "Lok Nagendra",
+      "phone": "+917973320995",
+      "email": "nagendrayesuri3@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CA7c0fdf11be1afce666e27f590cbee242",
+    "timestamp": "2026-05-08T16:11:46.700102",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi! Is"
+      },
+      {
+        "role": "assistant",
+        "text": "this"
+      },
+      {
+        "role": "assistant",
+        "text": "Venkata"
+      },
+      {
+        "role": "assistant",
+        "text": "Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This"
+      },
+      {
+        "role": "assistant",
+        "text": "is Arjun"
+      },
+      {
+        "role": "assistant",
+        "text": "calling"
+      },
+      {
+        "role": "assistant",
+        "text": "from"
+      },
+      {
+        "role": "assistant",
+        "text": "TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling"
+      },
+      {
+        "role": "assistant",
+        "text": "because"
+      },
+      {
+        "role": "assistant",
+        "text": "you recently"
+      },
+      {
+        "role": "assistant",
+        "text": "requested"
+      },
+      {
+        "role": "assistant",
+        "text": "a callback"
+      },
+      {
+        "role": "assistant",
+        "text": "regarding"
+      },
+      {
+        "role": "assistant",
+        "text": "our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this"
+      },
+      {
+        "role": "assistant",
+        "text": "a good"
+      },
+      {
+        "role": "assistant",
+        "text": "time"
+      },
+      {
+        "role": "assistant",
+        "text": "to chat"
+      },
+      {
+        "role": "assistant",
+        "text": "for a"
+      },
+      {
+        "role": "assistant",
+        "text": "minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Venkata Ramana regarding a callback request the prospect previously submitted. The call was initiated to establish contact and confirm if it was a convenient time to discuss TeamLease services."
+  },
+  {
+    "call_sid": "CAc0410e9464500ac5fcbd82e3035b90c0",
+    "timestamp": "2026-05-08T15:42:35.339553",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease contacted Venkata Ramana regarding a callback request for services. The conversation was just beginning and did not cover specific staffing requirements or details."
+  },
+  {
+    "call_sid": "CA43cdbc67ac41d50b085aa5703a4cfc52",
+    "timestamp": "2026-05-08T15:33:34.764345",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Venkata Ramana regarding a requested callback for services. The call concluded before any specific business requirements or staffing details could be discussed."
+  },
+  {
+    "call_sid": "CA3504189de7b572a8a8f3842f73686448",
+    "timestamp": "2026-05-08T15:30:39.941954",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Venkata Ramana following a callback request regarding services. The call ended immediately after the initial introduction and request to chat."
+  },
+  {
+    "call_sid": "CAfe0bd72e38d9421e74a8e549ed085c00",
+    "timestamp": "2026-05-08T15:26:35.436501",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease reached out to Venkata Ramana regarding a callback request for their services. The call was initiated to check if the lead was available for a conversation."
+  },
+  {
+    "call_sid": "CA7950664c2eec5180664d6ad2d9c4964b",
+    "timestamp": "2026-05-08T15:23:33.553266",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "The agent introduced themselves as Arjun from TeamLease, confirmed the prospect's identity as Venkata Ramana, and stated the purpose of the call was a callback request regarding TeamLease's services. The agent then asked if it was a good time to chat."
+  },
+  {
+    "call_sid": "CA2b83a9e33559ab67301bdd6c08024380",
+    "timestamp": "2026-05-08T14:00:48.503219",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Arjun calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "Arjun from TeamLease is calling Venkata Ramana to follow up on a recent callback request regarding TeamLease's services. The agent asks if it is a good time to chat."
+  },
+  {
+    "call_sid": "CA14150b7a8c74752b9206a01ccc0836c4",
+    "timestamp": "2026-05-08T13:52:35.036960",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Priya calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      },
+      {
+        "role": "user",
+        "text": "Alô. Alô."
+      },
+      {
+        "role": "assistant",
+        "text": "Is this a good time to chat for a minute?"
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "company_name": null,
+      "person_name": "Venkata Ramana",
+      "person_designation": null,
+      "person_email": "ramanayv1973@gmail.com",
+      "person_phone": "+917973320995",
+      "contract_staffing_required": null,
+      "contract_staffing_mode": null,
+      "number_of_staff": null,
+      "roles_of_staff": null,
+      "experience_of_roles": null,
+      "salary_of_roles": null,
+      "location_of_roles": null,
+      "other_requirements": null,
+      "call_type": "business"
+    },
+    "call_type": "business",
+    "summary": "The TeamLease agent, Priya, initiated the call with Venkata Ramana to follow up on a recent callback request regarding TeamLease's services. The agent confirmed the prospect's identity and is currently attempting to ascertain if it's a suitable time for a detailed discussion."
+  },
+  {
+    "call_sid": "CAb4f15da3969d2ea19d9536bb047bb8ff",
+    "timestamp": "2026-05-08T13:49:43.082485",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [
+      {
+        "role": "user",
+        "text": "Hello. Hello."
+      },
+      {
+        "role": "assistant",
+        "text": "Hi!"
+      },
+      {
+        "role": "assistant",
+        "text": "Is this Venkata Ramana?"
+      },
+      {
+        "role": "assistant",
+        "text": "This is Priya calling from TeamLease."
+      },
+      {
+        "role": "assistant",
+        "text": "I'm calling because you recently requested a callback regarding our services."
+      }
+    ],
+    "status": "completed",
+    "output": {
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.0-flash is no longer available to new users. Please update your code to use a newer model for the latest features and improvements.', 'status': 'NOT_FOUND'}}",
+      "person_name": "Venkata Ramana",
+      "person_phone": "+917973320995"
+    },
+    "call_type": "business",
+    "summary": "Call completed."
+  },
+  {
+    "call_sid": "CA4befe48bfc5c5963cad8143606af0915",
+    "timestamp": "2026-05-08T13:48:15.539409",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CA2fc086b048b5c6c5232d9df86e6685fe",
+    "timestamp": "2026-05-08T13:44:20.368061",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CA4c74d2bd2f82d3795001f6187615701b",
+    "timestamp": "2026-05-08T13:38:26.605426",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CAdf9ad4a989e493a24078db558fbac7c5",
+    "timestamp": "2026-05-08T13:37:53.769722",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  },
+  {
+    "call_sid": "CA322c8db485e8eeeba2b57ae853c51db4",
+    "timestamp": "2026-05-08T13:29:12.750741",
+    "lead": {
+      "name": "Venkata Ramana",
+      "phone": "+917973320995",
+      "email": "ramanayv1973@gmail.com"
+    },
+    "transcript": [],
+    "status": "completed",
+    "output": {},
+    "call_type": "business",
+    "summary": "No conversation recorded."
+  }
+]

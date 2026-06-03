@@ -1,0 +1,11 @@
+{
+	"deployment": {
+		"name": "bulk_reinvite",
+		"stack": "node20",
+		"type": "job",
+		"env_variables": {}
+	},
+	"execution": {
+		"main": "index.js"
+	}
+}

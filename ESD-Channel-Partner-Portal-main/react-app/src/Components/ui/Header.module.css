@@ -1,0 +1,377 @@
+.header {
+    background: var(--color-white);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--color-primary);
+}
+
+.container {
+    /* 1. Remove the 1400px limit to allow fluid growth */
+    max-width: none; 
+    width: 100%;
+
+    /* 2. Apply 50px gap on left and right edges */
+    /* Vertical padding remains var(--spacing-md), Horizontal becomes 50px */
+    padding: 5px 25px;
+    justify-content: space-between; /* Keeps logo left and user right */
+    position: relative;
+
+    /* 3. Layout settings (Keeping your original flex logic) */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+
+    /* 4. Safety: ensures padding doesn't cause horizontal overflow */
+    box-sizing: border-box; 
+    margin: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    
+}
+
+.logo h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+.logo img {
+  height: 40px !important;
+  width: auto !important;
+  object-fit: contain;
+}
+
+.badge {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-start;
+     margin-left: auto;
+  margin-right: 10px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+  background: linear-gradient(135deg, #fff5f0, #ffe8db);
+  transform: translateY(-1px);
+}
+
+.navLink svg {
+    width: 20px;
+    height: 20px;
+}
+
+.userSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.notificationBtn {
+    position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    color: var(--color-text-light);
+    transition: all var(--transition-fast);
+}
+
+.notificationBtn:hover {
+    background: #F3F4F6;
+    color: var(--color-primary);
+}
+
+.notificationDot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: var(--color-error);
+    border-radius: 50%;
+    border: 2px solid var(--color-white);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+
+.userProfile:hover {
+    background: #F3F4F6;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #f97316;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 0.5px solid var(--color-primary);
+  object-fit: cover;
+
+  image-rendering: auto;
+  transform: translateZ(0);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.userName {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-md);
+}
+
+.userRole {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+}
+
+.userProfileWrapper {
+    position: relative;
+}
+
+.dropdownIcon {
+    color: var(--color-text-light);
+    transition: transform var(--transition-fast);
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + var(--spacing-sm));
+    right: 0;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    min-width: 200px;
+    padding: var(--spacing-sm);
+    z-index: 1000;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-family);
+}
+
+.dropdownItem:hover {
+    background: #F3F4F6;
+    color: var(--color-primary);
+}
+
+.dropdownItem svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-light);
+}
+
+.dropdownItem:hover svg {
+    color: var(--color-primary);
+}
+
+.dropdownDivider {
+    height: 1px;
+    background: #E5E7EB;
+    margin: var(--spacing-sm) 0;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Tablet */
+@media (max-width: 968px) {
+    .nav {
+        display: none;
+    }
+
+    .userInfo {
+        display: none;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .logo h1 {
+        font-size: var(--font-size-lg);
+    }
+
+    .badge {
+        display: none;
+    }
+}
+
+.logo img, 
+.logoImg {
+  height: 35px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+/*hamburger menu*/
+/* MOBILE HAMBURGER */
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+/* TABLET + MOBILE BEHAVIOR */
+@media (max-width: 1000px) {
+  .nav {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .userInfo {
+    display: none;
+  }
+}
+
+/* MOBILE MENU */
+.mobileMenu {
+  width: 100%;
+  background: white;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  animation: slideDown 0.2s ease-out;
+}
+
+.mobileMenu a {
+  padding: 12px 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.mobileMenu a:hover {
+  background: #f5f5f5;
+  color: var(--color-primary);
+}
+/* Add this to your CSS file */
+
+.navLink:global(.active) {
+  color: var(--color-primary);
+  background: linear-gradient(135deg, #fff5f0, #ffe8db);
+  box-shadow: 
+    0 4px 12px rgba(255, 107, 0, 0.15),
+    inset 0 0 0 1px rgba(255, 107, 0, 0.2);
+}
+/* Ensure icons also change color when active */
+.navLink:global(.active) svg {
+    color: var(--color-primary);
+}
+
+/* Apply same logic to Mobile Menu if needed */
+.mobileMenu a:global(.active) {
+    background: #FFF5F0;
+    color: var(--color-primary);
+    border-left: 4px solid var(--color-primary);
+}
+.navLink::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: 0.25s ease;
+}

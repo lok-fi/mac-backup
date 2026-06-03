@@ -1,0 +1,263 @@
+.page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+}
+
+.page::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 300px;
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-dark) 100%
+    );
+    opacity: 0.05;
+    z-index: 0;
+}
+
+.main {
+    padding-bottom: var(--spacing-3xl);
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    max-width: none; 
+    width: 100%; 
+    padding: var(--spacing-2xl) 25px; 
+    margin: 0; 
+    box-sizing: border-box;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3xl);
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    background: linear-gradient(
+        135deg,
+        var(--color-primary) 0%,
+        var(--color-primary-dark) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+/* ================= FILTER CARD ================= */
+
+.filterCard {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.searchInput,
+.filterSelect {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    background: var(--color-white);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+
+.searchInput:focus,
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 20px rgba(255, 102, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ================= GRID ================= */
+
+.ticketsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+/* ================= TICKET CARD ================= */
+
+.ticketCardLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.ticketCard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out both;
+    transition: all 0.4s ease;
+}
+
+.ticketCard::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        var(--color-primary-dark)
+    );
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.ticketCard:hover::before {
+    transform: scaleX(1);
+}
+
+.ticketCard:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    border-color: var(--color-primary);
+}
+
+/* ================= CARD CONTENT ================= */
+
+.ticketHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticketId {
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.ticketDate {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+.ticketStatus {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    background: rgba(255, 102, 0, 0.1);
+    color: var(--color-primary);
+}
+
+.ticketSubject {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.ticketMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+.ticketAction {
+    margin-top: auto;
+    text-align: right;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 968px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .ticketsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .ticketCard:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+}
+
+

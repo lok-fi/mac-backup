@@ -1,0 +1,25 @@
+{
+  "functions": {
+    "targets": [
+      "esd_channel_partner_function",
+      "crm_function",
+      "desk_function",
+      "userauth",
+      "sap_function",
+      "sap_functions",
+      "bulk_reinvite"
+    ],
+    "ignore": [],
+    "source": "functions"
+  },
+  "client": {
+    "source": "react-app",
+    "plugin": "zcatalyst-cli-plugin-react",
+    "rewrites": [
+      {
+        "source": "^/((?!server).)*$",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

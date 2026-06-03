@@ -1,0 +1,137 @@
+/* Layout */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevents horizontal scrollbars from framework conflicts */
+}
+
+/* 🔥 RENAMED TO AVOID FRAMEWORK CONFLICTS */
+.loginWrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw; 
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: rgb(254, 249, 235);
+}
+
+/* LEFT SIDE */
+.leftSide {
+  flex: 1.5;
+  background-image: url('../assets/LoginImg.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  clip-path: ellipse(85% 100% at 10% 40%);
+}
+
+.overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  padding: 32px;
+  border-radius: 18px;
+}
+
+.logo-img {
+  max-width: 200px; /* Adjust this value based on your actual logo size */
+  height: auto;
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.tagline {
+  opacity: 0.9;
+}
+
+/* RIGHT SIDE */
+.rightSide {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(0, 0, 0);
+  padding: 20px; /* Ensures the card doesn't touch the screen edges on smaller screens */
+}
+
+/* LOGIN CARD */
+.formContainer {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+
+  /* 🔥 Flexible Width */
+  width: 100%;
+  max-width: 420px; 
+  
+  /* 🔥 Flexible Height */
+  min-height: 540px;
+  height: auto; 
+  
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+}
+
+.formContainer h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* LOGIN IFRAME WRAPPER */
+.login-iframe-container {
+  flex: 1; 
+  width: 100%;
+  overflow: hidden;  
+  height: auto; 
+  min-height: 400px; /* Gives the iframe breathing room */
+}
+
+/* FORCE iframe injected by Catalyst */
+.login-iframe-container iframe {
+  width: 100% !important;
+  height: 100% !important; 
+  min-height: 400px;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+/* EXTRA SAFETY (Catalyst sometimes nests divs) */
+.login-iframe-container * {
+  overflow: hidden !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .loginWrapper {
+    flex-direction: column;
+  }
+
+  .leftSide {
+    min-height: 250px;
+    clip-path: none;
+  }
+
+  .rightSide {
+    padding: 30px 20px; /* Ensures spacing when stacked vertically */
+  }
+
+  .formContainer {
+    /* Responsive card sizing for mobile/tablet */
+    width: 100%;
+    max-width: 420px; 
+    min-height: 520px;
+  }
+}

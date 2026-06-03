@@ -1,0 +1,13 @@
+{
+  "service": "CRM",
+  "whiteListedDomains": [
+    "https://generativelanguage.googleapis.com",
+    "wss://generativelanguage.googleapis.com"
+  ],
+  "cspDomains": {
+    "connect-src": [
+      "https://generativelanguage.googleapis.com",
+      "wss://generativelanguage.googleapis.com"
+    ]
+  }
+}

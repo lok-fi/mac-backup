@@ -1,0 +1,11 @@
+{
+  "project_name": "CRM-whatsapp",
+  "project_id": "17682000001808370",
+  "functions": {
+    "targets": [
+      "FivaWebhook"
+    ],
+    "ignore": [],
+    "source": "functions"
+  }
+}

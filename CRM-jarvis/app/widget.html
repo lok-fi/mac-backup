@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
+  <title>FIVA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+</head>
+<body>
+  <div class="bg-aurora" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+    <div class="bg-grain"></div>
+  </div>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 22 65 A 15 15 0 0 1 22 35 A 20 20 0 0 1 78 35 A 15 15 0 0 1 78 65"/>
+            <path d="M 22 65 L 44 65 L 44 88"/>
+            <path d="M 36 80 L 44 88 L 52 80"/>
+            <path d="M 78 65 L 56 65 L 56 42"/>
+            <path d="M 48 50 L 56 42 L 64 50"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">FIVA</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="liveBtn" class="live-btn" title="Live voice chat" aria-label="Live voice chat">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.5.5 0 0 1-.96 0L9.24 2.18a.5.5 0 0 0-.95 0l-2.35 8.36A2 2 0 0 1 4.02 12H2"/></svg>
+          <span>Live</span>
+        </button>
+        <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="liveBar" class="live-bar hidden" role="status" aria-live="polite">
+      <div class="live-bar-left">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="live-bar-status" id="liveStatus">Connecting…</span>
+        <span class="live-bar-level" id="liveLevel" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+      </div>
+      <div class="live-bar-actions">
+        <button id="liveMute" class="btn ghost" type="button">Mute</button>
+        <button id="liveEnd" class="btn danger" type="button">End</button>
+      </div>
+    </div>
+
+    <main id="chat" class="chat" aria-live="polite">
+      <div class="empty-state" id="emptyState">
+        <div class="hero">
+          <div class="hero-title" id="welcomeTitle">Hi, I'm FIVA.</div>
+          <div class="hero-sub" id="welcomeSub">What's on the list?</div>
+        </div>
+        <div class="suggest-grid">
+          <button class="suggest" data-prompt="__SNAP__">
+            <span class="suggest-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            </span>
+            <span><b>Snap &amp; create</b><br/><span class="suggest-sub">Photograph a business card, quote, or note → records</span></span>
+          </button>
+          <button class="suggest" data-prompt="Give me a morning briefing: which deals need attention, hot leads gone cold, and what to focus on today.">
+            <span class="suggest-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg>
+            </span>
+            <span><b>Today's briefing</b><br/><span class="suggest-sub">What needs attention right now</span></span>
+          </button>
+          <button class="suggest" data-prompt="Show me the 5 newest leads created this week with name, email, source and owner.">
+            <span class="suggest-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+            </span>
+            <span><b>Newest leads</b><br/><span class="suggest-sub">This week, top 5</span></span>
+          </button>
+          <button class="suggest" data-prompt="Find every open deal over ₹10,00,000 closing this month and list owner, stage and amount.">
+            <span class="suggest-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </span>
+            <span><b>Hot deals</b><br/><span class="suggest-sub">High-value, closing this month</span></span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <div id="dropOverlay" class="drop-overlay hidden" aria-hidden="true">
+      <div class="drop-card">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+        <div>Drop images to attach</div>
+      </div>
+    </div>
+
+    <form id="composer" class="composer" autocomplete="off">
+      <div id="attachments" class="attachments" hidden></div>
+      <div class="composer-row">
+        <input id="fileInput" type="file" accept="image/*" capture="environment" multiple hidden />
+        <button id="attachBtn" type="button" class="icon-btn composer-btn" title="Attach image / take photo" aria-label="Attach image">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+        </button>
+        <textarea id="input" class="input" rows="1" placeholder="Ask FIVA, snap a card, or paste an image…" aria-label="Message"></textarea>
+        <button id="micBtn" type="button" class="icon-btn composer-btn" title="Voice input" aria-label="Voice input">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+        </button>
+        <button id="sendBtn" type="submit" class="send" aria-label="Send">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Settings drawer -->
+  <div id="settingsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="drawer">
+      <div class="drawer-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button id="settingsClose" class="icon-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <label class="field">
+          <span class="field-label">Gemini API key</span>
+          <input id="apiKey" type="password" placeholder="AIza…" autocomplete="off" />
+          <span class="field-hint">Stored locally in your browser only. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.</span>
+        </label>
+        <label class="field">
+          <span class="field-label">Model</span>
+          <input id="model" type="text" placeholder="gemini-3.1-pro" />
+          <span class="field-hint">e.g. <code>gemini-3.1-pro</code>, <code>gemini-2.5-pro</code>, <code>gemini-2.5-flash</code>.</span>
+        </label>
+        <label class="field">
+          <span class="field-label">Call me</span>
+          <input id="preferredName" type="text" placeholder="(uses your CRM name by default)" />
+          <span class="field-hint">FIVA will greet you with this name and refer to you by it.</span>
+        </label>
+        <div class="field">
+          <span class="field-label">Knowledge base</span>
+          <span class="field-hint">Facts FIVA remembers about you across sessions. Add anything you'd want a long-time colleague to know.</span>
+          <div class="kb-list" id="knowledgeList"></div>
+          <div class="kb-add-row">
+            <input id="knowledgeAddInput" type="text" placeholder="e.g. I work mostly with healthcare clients" />
+            <button id="knowledgeAddBtn" type="button" class="btn ghost">Add</button>
+          </div>
+        </div>
+        <label class="field">
+          <span class="field-label">Require confirmation before writes</span>
+          <select id="confirmWrites">
+            <option value="true">Yes — ask me before create/update/delete</option>
+            <option value="false">No — let FIVA act autonomously</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Speak responses aloud</span>
+          <select id="speakResponses">
+            <option value="false">Off</option>
+            <option value="true">On — read final replies via voice</option>
+          </select>
+          <span class="field-hint">Uses your browser's text-to-speech. Great for mobile / hands-free.</span>
+        </label>
+        <label class="field">
+          <span class="field-label">Greet me on open</span>
+          <select id="greetOnOpen">
+            <option value="true">Yes — say hi with a proactive opener</option>
+            <option value="false">No — start with empty chat</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">System prompt (optional)</span>
+          <textarea id="systemPrompt" rows="4" placeholder="Override default behavior…"></textarea>
+        </label>
+        <label class="field">
+          <span class="field-label">WhatsApp Bot — Catalyst URL</span>
+          <input id="catalystUrl" type="url" placeholder="https://crm-whatsapp-….catalystserverless.in/server/fivawebhook" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span class="field-label">WhatsApp Bot — Internal API Key</span>
+          <input id="whatsappApiKey" type="password" placeholder="Your INTERNAL_API_KEY value" autocomplete="off" />
+        </label>
+        <div class="drawer-actions">
+          <button id="settingsSave" class="btn primary">Save</button>
+          <button id="settingsClear" class="btn ghost">Clear all</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/crm-tools.js"></script>
+  <script src="js/gemini.js"></script>
+  <script src="js/multimodal.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/live-chat.js"></script>
+  <script src="js/widget.js"></script>
+</body>
+</html>

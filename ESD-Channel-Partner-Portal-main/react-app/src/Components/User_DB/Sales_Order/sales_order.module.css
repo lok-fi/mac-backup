@@ -1,0 +1,329 @@
+.page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+    /* overflow: hidden; */
+}
+
+.page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    opacity: 0.05;
+    z-index: 0;
+}
+
+.main {
+    padding-bottom: var(--spacing-3xl);
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    max-width: none; 
+    width: 100%; 
+    padding: var(--spacing-2xl) 25px; 
+    margin: 0; 
+    box-sizing: border-box; 
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: var(--spacing-xl) 20px;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-xs);
+}
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+}
+
+.filterCard {
+    margin-bottom: 48px;
+  padding: 0px 0px 0px 0px;
+  background: transparent;
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  /* border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); */
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.searchInput, .filterSelect {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background: var(--color-white);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+    0 5px 10px rgba(0, 0, 0, 0.04), 
+    0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.searchInput:focus, .filterSelect:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 
+    0 5px 10px rgba(0, 0, 0, 0.04), 
+    0 10px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+/* --- GRID ADJUSTMENT --- */
+.leadsGrid {
+    display: grid;
+    /* This logic ensures exactly 3 columns on desktop, 
+       then drops to 2 or 1 automatically as the screen gets smaller */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 24px; /* Matches the spacing of the brochures page */
+    margin-top: var(--spacing-xl);
+}
+
+/* --- HEADER ALIGNMENT --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Aligns title and export button better */
+    margin-bottom: var(--spacing-xl);
+}
+
+/* --- RESPONSIVE BREAKPOINTS --- */
+
+/* Tablet View: Switch to 2 columns */
+@media (max-width: 1100px) {
+    .leadsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile View: Switch to 1 column and fix spacing */
+@media (max-width: 800px) {
+    .leadsGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    /* Ensure the search bar/filters match the brochures look */
+    .filters {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .container {
+        padding: 20px 16px; /* Keeps the full-width look but adds breathing room */
+    }
+}
+
+/* --- THE CARD --- */
+.leadCard {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 24px;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out both;
+}
+
+.leadCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: #f97316;
+}
+
+/* --- CARD TOP: Date & Status --- */
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dateText {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f97316; /* Primary orange color like lead page */
+}
+
+.statusBadgeCustom {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statusBadgeCustom[data-variant="success"] {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+.statusBadgeCustom[data-variant="warning"] {
+    background: rgba(249, 115, 22, 0.12);
+    color: #ea580c;
+}
+.statusBadgeCustom[data-variant="default"] {
+    background: rgba(37, 99, 235, 0.12); /* Light blue bg */
+    color: #2563eb;                    /* Solid blue text */
+}
+/* --- NAME HOVER EFFECT --- */
+.cardIdentity {
+    margin-top: 4px;
+}
+
+.leadName {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.leadCard:hover .leadName {
+    color: #f97316; /* Color shift same as lead page */
+}
+
+.orderId {
+    font-size: 13px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+}
+
+/* --- INFO BOX --- */
+.dynamicInfoBox {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, rgba(249, 115, 22, 0.02) 100%);
+  border: 1px solid rgba(249, 115, 22, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.infoGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.infoLabel {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.infoValue {
+    font-size: 13px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.cpTag {
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* --- RIPPLE BUTTON --- */
+.primaryBtn {
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #f97316;
+    background: transparent;
+    border: 2px solid #f97316;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.primaryBtn::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    border-radius: 50%;
+    background: #f97316;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.primaryBtn:hover::before {
+    width: 350%;
+    height: 350%;
+}
+
+.primaryBtn:hover {
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2);
+}
+
+/* --- UTILS & ANIMATIONS --- */
+.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.emptyState {
+    padding: 60px 20px;
+    text-align: center;
+    opacity: 0.85;
+}
+
+/* Unused leadAvatar, leadHeader etc from original code - Commented as requested */
+/* .leadAvatar { ... }
+.leadHeader { ... }
+*/

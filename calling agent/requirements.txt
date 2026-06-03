@@ -1,0 +1,19 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+websockets>=13.0
+httpx>=0.28.1
+python-multipart>=0.0.9
+
+# Google Gemini Live
+google-genai>=1.16.0
+
+# Sarvam TTS (uses httpx above)
+
+# Knowledge base
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+
+# Config
+pydantic-settings>=2.0.0
+
+# audioop-lts only needed on Python 3.13+; Python 3.9-3.12 has it built-in

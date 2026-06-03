@@ -1,0 +1,10 @@
+{
+	"name": "sap_functions",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "catalystadmin@dsv360.ai",
+	"dependencies": {
+		"express": "^5.2.1",
+		"zcatalyst-sdk-node": "latest"
+	}
+}

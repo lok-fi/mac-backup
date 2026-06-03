@@ -1,0 +1,737 @@
+.page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+     display: flex;              /* 🔥 ADD THIS */
+  flex-direction: column;   
+}
+.page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0px;
+    right: 0px;
+    height: 300px;
+    background: var(--color-primary);
+    opacity: 0.05;
+    border: 1px;
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+    z-index: 0;
+}
+.main {
+    /* padding-bottom: var(--spacing-3xl); */
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+.sitevisitdone {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.sitevisitconfirmed {
+    background: #cffafe;
+    color: #0e7490;
+}
+
+.possessioncompleted {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.newlead {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+.possesioncompleted {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.container {
+    /* 1. Remove max-width so it can expand to any screen size */
+    max-width: none; 
+    width: 100%; 
+    padding: var(--spacing-2xl) 25px;  
+    margin: 0; 
+    box-sizing: border-box; 
+    
+}
+
+/* Optional: Adjust for mobile so 50px doesn't eat up too much space */
+@media (max-width: 600px) {
+    .container {
+        padding: var(--spacing-xl) 20px; /* Smaller gap on small phones */
+    }
+}
+
+.welcomeSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+    /* margin-bottom: calc(var(--spacing-2xl) + 12px); */
+    animation: fadeInDown 0.6s ease-out;
+    padding: 0px 0 32px; 
+}
+
+.title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-sm);
+}
+
+.subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+}
+
+.wave {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  background-clip: initial !important;
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave 2.5s ease-in-out infinite;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.metricCard {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+    animation-fill-mode: both;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    /* border: 1px solid rgba(255, 255, 255, 0.3); */     
+}
+
+.metricCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.metricCard:hover::before {
+    transform: scaleX(1);
+}
+
+.metricCard:hover {
+    transform: translateY(-8px) scale(1.02); 
+}
+
+.metricCard:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.metricCard:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.metricCard:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.metricCard:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.metricCard.highlight {
+    border: 2px solid var(--color-primary);
+    background: linear-gradient(135deg, rgba(255, 245, 240, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.metricCard.highlight::before {
+    transform: scaleX(1);
+}
+
+.metricCard.highlight::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 102, 0, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.metricContent {
+    flex: 1;
+}
+
+.metricLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metricValue {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    letter-spacing: -1px;
+}
+
+.metricSubtext {
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    color: var(--color-text-light);
+}
+
+.metricIcon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Keep your existing @keyframes */
+@keyframes iconShine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+.metricIcon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%; 
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    /* Remove the 'animation' line from here */
+    pointer-events: none;
+}
+/* Only animate the icon inside the specific hovered card */
+.metricCard:hover .metricIcon::after {
+    animation: iconShine 0.8s ease-in-out forwards;
+}
+
+
+
+/* 
+.section {
+    margin-bottom: var(--spacing-3xl);
+    animation: fadeInUp 0.6s ease-out 0.5s both;
+} 
+
+.sectionTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xl);
+}*/
+
+/* commission */
+.commissionGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.commissionCard {
+    padding: 32px 24px;
+    background: #fff;
+    
+    position: relative;
+}
+
+/* Color-coded accent borders on the left */
+.pendingBorder { border-left: 5px solid #f97316; }
+.dueBorder { border-left: 5px solid #ef4444; }
+.paidBorder { border-left: 5px solid #22c55e; }
+
+.commLabel {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.commValue {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 24px;
+}
+.commissionCard:hover .commValue {
+    color: #f97316;
+}
+
+.commStats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #f8fafc; /* Light grey background for rows */
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.statRow span {
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.statRow strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Tablet & Mobile Responsiveness */
+@media (max-width: 1100px) {
+    .commissionGrid {
+        grid-template-columns: 1fr; /* Stacks vertically on small screens */
+    }
+}
+
+/* 2. The Lift Effect on Hover */
+.commissionCard:hover {
+    /* Move card up by 8 pixels */
+    transform: translateY(-8px);
+}
+
+/* 3. Optional: Subtle scale to the internal rows on hover */
+.commissionCard:hover .statRow {
+    background: #f1f5f9; /* Slightly darker grey on hover */
+}
+
+/* Container for the whole block */
+.recentLeadsBlock {
+    margin-top: 48px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+/* Header Section styling */
+.tableHeaderSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 4px;
+}
+
+.tableTitle {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+.viewAllLeadsBtn {
+    background: transparent;
+    border: none;
+    color: #f97316;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s ease;
+}
+
+.viewAllLeadsBtn:hover {
+    transform: translateX(5px);
+}
+
+/* Card and Table styling */
+.tableMainCard {
+    padding: 0 !important;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.tableResponsiveWrapper {
+    overflow-x: auto;
+}
+
+.leadsStyledTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leadsStyledTable th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 20px 24px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.interactiveRow {
+    transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.interactiveRow:hover {
+     background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.leadsStyledTable td {
+    padding: 22px 24px;
+    font-size: 14px;
+    color: #475569;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Typography and Action Styles */
+.boldText { font-weight: 700; color: #0f172a; }
+.daysHighlight { font-weight: 800; color: #1e293b; font-size: 15px; }
+
+.orangeAction {
+    color: #f97316;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Status Badges */
+.badge {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.registered { background: #dcfce7; color: #15803d; }
+.booked { background: #f3e8ff; color: #7e22ce; }
+.qualified { background: #ecfdf5; color: #059669; }
+.inprogress { background: #fef3c7; color: #b45309; }
+.newlead { background: #dbeafe; color: #1d4ed8; }
+
+
+/* Container for both charts side-by-side */
+.chartsRow {
+    display: flex;
+    flex-wrap: wrap; /* Allows stacking on small screens */
+    gap: 24px;
+    /* margin-top: 32px; */
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+/* Individual Card Styling Make the cards look premium */
+.chartCard {
+    flex: 1; 
+    min-width: 320px; /*  Forces stacking when screen gets narrow */
+    padding: 24px;
+    background: #ffffff !important;
+    border-radius: 24px !important; /* Extra round */ 
+    padding: 24px;
+    transition: all 0.3s ease;  
+}
+
+.chartContainer {
+    height: 400px;
+    position: relative;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 16px;
+    width: 100%;
+    z-index: 1;
+    min-height: 260px;
+}
+
+.chartHeader {
+    margin-bottom: var(--spacing-xl);
+}
+
+.chartHeader h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.chartHeader p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Subtle overlay shine */
+.chartContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+    border-radius: 16px;
+}
+
+.metricCard,
+.chartCard,
+.commissionCard,
+.tableMainCard {
+    background: #ffffff;
+    border-radius: 20px;
+    /* Use a thinner, softer border */
+    border: 2px solid rgba(0, 0, 0, 0.06);
+
+    /* MODERN REFINED DEPTH 
+       This creates a 'floating' effect without the dark smudge */
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.02),    /* Tiny edge definition */
+        0 10px 20px rgba(0, 0, 0, 0.04),  /* Soft mid-range lift */
+        0 20px 40px rgba(0, 0, 0, 0.06);  /* Broad ambient diffusion */
+
+    /* Snappy but smooth transition */
+    transition: 
+        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), 
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+}
+
+.metricCard:hover,
+.chartCard:hover,
+.commissionCard:hover {
+    /* Slight lift is more elegant than a big jump */
+    transform: translateY(-6px) scale(1.01);
+ 
+    /* Highlight the border slightly on hover */
+    border-color: rgba(0, 0, 0, 0.1);
+
+    /* HOVER DEPTH Increased spread but LOWER opacity to keep it 'light' */
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.04),
+        0 15px 30px rgba(0, 0, 0, 0.08),
+        0 30px 60px rgba(0, 0, 0, 0.12);
+}
+
+.emptyChart {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* optical alignment correction */
+  transform: translateY(-12px);
+}
+
+.emptyIconWrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #f2f4f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f97316;
+  margin-bottom: 14px;
+}
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #344054;
+  margin-bottom: 4px;
+}
+
+.emptySubtitle {
+  font-size: 13.5px;
+  color: #98a2b3;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1200px) {
+    .metricsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 968px) {
+    .welcomeSection {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-lg);
+    }
+
+    .actionsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .chartContainer {
+        height: 300px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .container {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .metricsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .metricCard {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .chartContainer {
+        height: 250px;
+    }
+
+    .metricCard:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+}
+
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1100px) {
+    .chartsRow {
+        /* Switch to 1 column when space is tight */
+        grid-template-columns: 1fr;
+    }
+    
+    .chartContainer {
+        /* Slightly smaller height on tablets/mobile */
+        height: 300px;
+    }
+}
+
+@media (max-width: 640px) {
+    .chartsRow {
+        gap: 16px;
+    }
+    
+    .chartCard {
+        padding: 16px;
+    }
+}
+
+

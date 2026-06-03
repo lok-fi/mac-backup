@@ -1,0 +1,13 @@
+{
+	"name": "esd_channel_partner_function",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "catalystadmin@dsv360.ai",
+	"dependencies": {
+		"axios": "^1.13.2",
+		"cors": "^2.8.5",
+		"express": "^5.2.1",
+		"express-fileupload": "^1.5.2",
+		"zcatalyst-sdk-node": "^3.1.1"
+	}
+}
