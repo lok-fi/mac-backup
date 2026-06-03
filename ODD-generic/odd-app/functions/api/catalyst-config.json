@@ -1,0 +1,14 @@
+{
+	"deployment": {
+		"name": "api",
+		"stack": "node20",
+		"type": "advancedio",
+		"env_variables": {
+			"AGENT_SERVICE_URL": "https://odd-agent-service-904122474688.us-central1.run.app",
+			"AGENT_SECRET": "odd-prod-secret-7f3a"
+		}
+	},
+	"execution": {
+		"main": "index.js"
+	}
+}

@@ -1,0 +1,120 @@
+import {
+  Landmark, HeartPulse, ShoppingCart, Factory, Truck, GraduationCap, Building2, Megaphone,
+} from 'lucide-react'
+
+// Each industry powers a clickable demo card. On click, the modal explains
+// WHY ODD matters there and HOW it's used, plus a link straight into the app.
+export const industries = [
+  {
+    id: 'finance',
+    name: 'Finance & Banking',
+    icon: Landmark,
+    color: 'from-blue-500 to-indigo-600',
+    tagline: 'Turn ledgers into live financial command centres.',
+    why: 'Finance teams drown in spreadsheets and month-end reports. ODD reads raw financial exports and instantly surfaces the numbers leadership actually asks for.',
+    how: [
+      'Upload P&L, balance sheet or transaction exports — ODD builds revenue, cost and cash-flow views automatically.',
+      'Connect Zoho Books via MCP for always-fresh figures.',
+      'Ask the assistant for “runway”, “burn rate” or “revenue by product” and get the KPI on the spot.',
+    ],
+    kpis: ['Revenue & Margin', 'Cash Flow', 'Burn & Runway', 'AR / AP Aging'],
+  },
+  {
+    id: 'healthcare',
+    name: 'Healthcare',
+    icon: HeartPulse,
+    color: 'from-rose-500 to-pink-600',
+    tagline: 'From patient records to operational clarity.',
+    why: 'Clinics and hospitals sit on operational data they rarely visualise. ODD makes capacity, outcomes and throughput visible without an analytics team.',
+    how: [
+      'Drop in appointment, admission or billing exports to see utilisation and wait-time trends.',
+      'Track bed occupancy, patient inflow and department load across pages.',
+      'Ask for “no-show rate by clinic” or “avg length of stay” in plain language.',
+    ],
+    kpis: ['Bed Occupancy', 'Patient Inflow', 'Wait Times', 'Department Load'],
+  },
+  {
+    id: 'retail',
+    name: 'Retail & E-commerce',
+    icon: ShoppingCart,
+    color: 'from-amber-500 to-orange-600',
+    tagline: 'Every SKU, store and channel — at a glance.',
+    why: 'Retailers need to react fast to what’s selling. ODD turns sales and inventory files into a real-time merchandising view.',
+    how: [
+      'Upload sales, inventory or POS exports — ODD builds best-sellers, stock and margin dashboards.',
+      'Connect Zoho Commerce/Inventory through MCP for live numbers.',
+      'Ask for “top SKUs this week” or “stores below target” instantly.',
+    ],
+    kpis: ['Sales by Channel', 'Top SKUs', 'Stock Levels', 'Basket Size'],
+  },
+  {
+    id: 'manufacturing',
+    name: 'Manufacturing',
+    icon: Factory,
+    color: 'from-slate-500 to-slate-700',
+    tagline: 'Production and quality, visualised in real time.',
+    why: 'Plant data lives in machine logs and spreadsheets. ODD converts it into OEE, output and defect dashboards leaders can act on.',
+    how: [
+      'Upload production logs and quality reports to track output and downtime.',
+      'See OEE, yield and defect rates broken down by line and shift.',
+      'Ask “which line has the highest downtime?” and drill in.',
+    ],
+    kpis: ['OEE', 'Output / Shift', 'Defect Rate', 'Downtime'],
+  },
+  {
+    id: 'logistics',
+    name: 'Logistics & Supply',
+    icon: Truck,
+    color: 'from-teal-500 to-cyan-600',
+    tagline: 'Track every shipment, route and cost.',
+    why: 'Supply chains generate huge volumes of movement data. ODD makes on-time performance and cost-per-shipment instantly clear.',
+    how: [
+      'Upload shipment and fleet exports to map delivery performance.',
+      'Monitor on-time rate, transit times and cost per route.',
+      'Ask for “late deliveries by region” to find bottlenecks fast.',
+    ],
+    kpis: ['On-Time Rate', 'Transit Time', 'Cost / Shipment', 'Fleet Utilisation'],
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    icon: GraduationCap,
+    color: 'from-violet-500 to-purple-600',
+    tagline: 'Enrolment, performance and engagement together.',
+    why: 'Institutions track outcomes across scattered systems. ODD unifies enrolment, attendance and results into one clear picture.',
+    how: [
+      'Upload enrolment, attendance and grade exports for instant cohort views.',
+      'Track pass rates, attendance and course demand by term.',
+      'Ask for “attendance trend by department” in seconds.',
+    ],
+    kpis: ['Enrolment', 'Attendance', 'Pass Rate', 'Course Demand'],
+  },
+  {
+    id: 'realestate',
+    name: 'Real Estate',
+    icon: Building2,
+    color: 'from-emerald-500 to-green-600',
+    tagline: 'Portfolio performance without the spreadsheets.',
+    why: 'Property portfolios hide value in rent rolls and occupancy sheets. ODD turns them into yield and occupancy dashboards.',
+    how: [
+      'Upload rent rolls and lease data to see occupancy and yield by property.',
+      'Track collections, vacancies and renewals across the portfolio.',
+      'Ask “which properties are below target occupancy?” and act.',
+    ],
+    kpis: ['Occupancy', 'Rental Yield', 'Collections', 'Lease Renewals'],
+  },
+  {
+    id: 'marketing',
+    name: 'Marketing & Sales',
+    icon: Megaphone,
+    color: 'from-fuchsia-500 to-pink-600',
+    tagline: 'Pipeline and campaign ROI, on demand.',
+    why: 'Marketing spend needs accountability. ODD ties campaign and CRM data into funnel and ROI dashboards automatically.',
+    how: [
+      'Upload campaign and CRM exports to build funnel and ROI views.',
+      'Connect Zoho CRM via MCP for a live pipeline dashboard.',
+      'Ask for “CAC by channel” or “pipeline by stage” instantly.',
+    ],
+    kpis: ['Pipeline Value', 'Conversion', 'CAC / ROI', 'Lead Sources'],
+  },
+]

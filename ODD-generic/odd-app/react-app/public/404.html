@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>FI Digital - ODD</title>
+  <script>
+    // Single-page app routing workaround for static hosts.
+    // Store the full path in sessionStorage, then redirect to index.html.
+    var path = window.location.pathname;
+    sessionStorage.setItem('redirect_path', path);
+    window.location.replace(
+      window.location.origin + '/app/index.html'
+    );
+  </script>
+</head>
+<body></body>
+</html>
