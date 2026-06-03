@@ -1,0 +1,1664 @@
+
+// const express = require('express');
+// const catalyst = require('zcatalyst-sdk-node');
+// const cors    = require('cors');
+// const XLSX    = require('xlsx');
+
+// const app = express();
+// app.use(express.json({ limit: '50mb' }));
+// app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// app.use(cors());
+
+// // ──────────────────────────────────────────────
+// // HELPERS
+// // ──────────────────────────────────────────────
+// const num = (v) => {
+//     if (v === null || v === undefined || v === '#N/A' || v === '') return 0;
+//     const n = Number(v);
+//     return isNaN(n) ? 0 : n;
+// };
+
+// const yn = (v) => {
+//     if (v === null || v === undefined || v === '#N/A') return 'N';
+//     return String(v).trim().toUpperCase() === 'Y' ? 'Y' : 'N';
+// };
+
+// const clean = (v) => {
+//     if (v === null || v === undefined || v === '#N/A') return '';
+//     return String(v).trim();
+// };
+
+// const hasValue = (v) =>
+//     v !== null && v !== undefined && v !== '#N/A' && v !== '' && v !== '0' && Number(v) !== 0;
+
+// const findLatestMonthCol = (rows, step, startCol) => {
+//     let lastDataCol = startCol;
+//     for (let col = startCol; col < (rows[0] || []).length; col += step) {
+//         const actualCol = col + 1;
+//         const hasData = rows.slice(2).some(r => hasValue(r[actualCol]));
+//         if (hasData) lastDataCol = col;
+//     }
+//     return lastDataCol;
+// };
+
+// const buildLookup = (rows, keyCol = 1) => {
+//     const map = {};
+//     for (let i = 2; i < rows.length; i++) {
+//         const row = rows[i];
+//         if (!row || !row[0]) continue;
+//         const key = clean(row[keyCol]);
+//         const nameKey = 'name:' + clean(row[0]).toLowerCase();
+//         if (key && key !== '#N/A') map[key] = row;
+//         if (nameKey !== 'name:') map[nameKey] = row;
+//     }
+//     return map;
+// };
+
+// const lookup = (map, code, name) => {
+//     if (code && code !== '#N/A' && map[code]) return map[code];
+//     return map['name:' + (name || '').toLowerCase()] || null;
+// };
+
+// const monthLabel = (rows, col) => {
+//     const v = rows[0] && rows[0][col];
+//     if (!v) return 'Latest';
+//     try {
+//         const d = new Date(v);
+//         if (!isNaN(d)) return d.toLocaleString('en-AU', { month: 'short', year: '2-digit' });
+//     } catch (_) {}
+//     return String(v);
+// };
+
+// // ──────────────────────────────────────────────
+// // DATA QUALITY CHECK
+// // ──────────────────────────────────────────────
+// //
+// // Thresholds are set based on what a healthy real scorecard actually looks like.
+// // Some sheets (CX, Google) naturally have lower coverage because NZ dealers and
+// // A "WARN" status saves but flags the issue to the user.
+// //
+// const runQualityCheck = (dealers) => {
+//     const total = dealers.length;
+//     const counts = {
+//         dealers:      total,
+//         sales_actual: 0, sales_target: 0,
+//         mkt_total:    0, parts_actual: 0, parts_target: 0,
+//         ci:           0, doty_total:   0,
+//         cx_score:     0, google_score: 0,
+//     };
+//     dealers.forEach(d => {
+//         const m = d.monthly[0];
+//         if (m.sales.actual > 0)                                     counts.sales_actual++;
+//         if (m.sales.target > 0)                                     counts.sales_target++;
+//         if (m.market.total > 0)                                     counts.mkt_total++;
+//         if (m.parts.actual > 0)                                     counts.parts_actual++;
+//         if (m.parts.target > 0)                                     counts.parts_target++;
+//         if ((m.ci.status && m.ci.status !== 'No') || m.ci.pts > 0)  counts.ci++;
+//         if (m.doty.total > 0)                                       counts.doty_total++;
+//         if (m.service.score === 'Y' || m.service.response === 'Y')  counts.cx_score++;
+//         if (m.google.score > 0)                                     counts.google_score++;
+//     });
+//     const summary = {};
+//     for (const [field, count] of Object.entries(counts)) {
+//         summary[field] = field === 'dealers'
+//             ? count
+//             : { count, total, pct: total > 0 ? Math.round((count / total) * 100) : 0 };
+//     }
+//     return { summary };
+// };
+
+
+// // ──────────────────────────────────────────────
+// // CORE PARSER
+// // ──────────────────────────────────────────────
+// const parseScorecard = (base64Data) => {
+//     const buf = Buffer.from(base64Data, 'base64');
+//     const wb  = XLSX.read(buf, { type: 'buffer', cellDates: true });
+
+//     const sheetRows = (name) => {
+//         const ws = wb.Sheets[name];
+//         if (!ws) return [];
+//         return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
+//     };
+
+//     const dealerListRows = sheetRows('DEALER LIST');
+//     const salesRows      = sheetRows('SALES');
+//     const mktRows        = sheetRows('MKT SHARE');
+//     const stockRows      = sheetRows('STOCK');
+//     const partsRows      = sheetRows('PARTS (2)');
+//     const cxRows         = sheetRows('SERVICE CX');
+//     const googleRows     = sheetRows('GOOGLE REVIEWS');
+//     const ciRows         = sheetRows('CI');
+//     const dotyRows       = sheetRows('DOTY');
+
+//     const salesMap  = buildLookup(salesRows);
+//     const mktMap    = buildLookup(mktRows);
+//     const stockMap  = buildLookup(stockRows);
+//     const partsMap  = buildLookup(partsRows);
+//     const cxMap     = buildLookup(cxRows);
+//     const googleMap = buildLookup(googleRows, 2);
+//     const ciMap     = buildLookup(ciRows);
+//     const dotyMap   = buildLookup(dotyRows);
+
+//     const salesMonthCol = findLatestMonthCol(salesRows, 2, 2);
+//     const mktMonthCol   = findLatestMonthCol(mktRows, 2, 2);
+//     const partsMonthCol = findLatestMonthCol(partsRows, 2, 2);
+//     const stockMonthCol = findLatestMonthCol(stockRows, 3, 2);
+//     const cxMonthCol    = findLatestMonthCol(cxRows, 4, 2);
+
+//     const dealers = [];
+
+//     for (let i = 1; i < dealerListRows.length; i++) {
+//         const dl = dealerListRows[i];
+//         if (!dl || !dl[0]) continue;
+
+//         const name   = clean(dl[0]);
+//         const code   = clean(dl[1]);
+//         const region = clean(dl[2]);
+//         const pma    = clean(dl[3]);
+//         if (!name) continue;
+
+//         const sRow  = lookup(salesMap, code, name);
+//         const mRow  = lookup(mktMap, code, name);
+//         const stRow = lookup(stockMap, code, name);
+//         const pRow  = lookup(partsMap, code, name);
+//         const cxRow = lookup(cxMap, code, name);
+//         const gRow  = lookup(googleMap, code, name);
+//         const ciRow = lookup(ciMap, code, name);
+//         const dRow  = lookup(dotyMap, code, name);
+
+//         dealers.push({
+//             dealer: { name, region, pma },
+//             meta:   { recordId: code || String(i) },
+//             monthly: [{
+//                 month:   monthLabel(salesRows, salesMonthCol),
+//                 sales:   { target: num(sRow?.[salesMonthCol]),     actual: num(sRow?.[salesMonthCol + 1]) },
+//                 market:  { total:  num(mRow?.[mktMonthCol]),       mg:     num(mRow?.[mktMonthCol + 1]) },
+//                 stock:   { ice:    num(stRow?.[stockMonthCol]),    hev:    num(stRow?.[stockMonthCol + 1]), bev: num(stRow?.[stockMonthCol + 2]) },
+//                 parts:   { target: num(pRow?.[partsMonthCol]),     actual: num(pRow?.[partsMonthCol + 1]) },
+//                 service: { response: yn(cxRow?.[cxMonthCol]), score: yn(cxRow?.[cxMonthCol + 1]), leadTime: yn(cxRow?.[cxMonthCol + 2]), training: yn(cxRow?.[cxMonthCol + 3]) },
+//                 google:  { score: num(gRow?.[3]), responses: num(gRow?.[4]) },
+//                 ci:      { status: clean(ciRow?.[2]) || 'No', pts: num(ciRow?.[3]) },
+//                 doty:    { sales: num(dRow?.[3]), aftersales: num(dRow?.[4]), google: num(dRow?.[5]), ci: num(dRow?.[6]), total: num(dRow?.[7]) }
+//             }]
+//         });
+//     }
+
+//     return dealers;
+// };
+
+
+// // ──────────────────────────────────────────────
+// // GET  /  — serve dealers from data store
+// // ──────────────────────────────────────────────
+// app.get('/', async (req, res) => {
+//     try {
+//         const catalystApp = catalyst.initialize(req);
+//         const zcql = catalystApp.zcql();
+
+//         if (!req.query?.id) return res.status(400).json({ error: 'Missing ID' });
+
+//         const result = await zcql.executeZCQLQuery('SELECT * FROM dashboard_data');
+//         let allDealers = [];
+
+//         if (result && result.length > 0) {
+//             result.forEach(r => {
+//                 try {
+//                     const row = r.dashboard_data || r.DASHBOARD_DATA || Object.values(r)[0];
+//                     if (row && row.data) {
+//                         const parsed = JSON.parse(row.data);
+//                         if (Array.isArray(parsed)) allDealers = allDealers.concat(parsed);
+//                     }
+//                 } catch (e) { console.log('Skipping row:', e.message); }
+//             });
+//         }
+
+//         return res.status(200).json(allDealers);
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({ error: err.message });
+//     }
+// });
+
+
+// // ──────────────────────────────────────────────
+// // POST  /process-scorecard  — parse, quality-check, store
+// // ──────────────────────────────────────────────
+// app.post('/process-scorecard', async (req, res) => {
+//     try {
+//         const catalystApp = catalyst.initialize(req);
+//         const zcql = catalystApp.zcql();
+
+//         const { fileData } = req.body;
+//         if (!fileData) return res.status(400).json({ error: 'No file data received' });
+
+//         // 1. Parse
+//         console.log('Parsing Excel...');
+//         const dealers = parseScorecard(fileData);
+//         console.log(`Parsed ${dealers.length} dealers`);
+
+//         // 2. Quality check — informational only, never blocks
+//         const quality = runQualityCheck(dealers);
+//         console.log('Quality summary:', JSON.stringify(quality.summary));
+
+//         // 3. Save to data store
+//         const base = 'SCORECARD_01';
+//         await zcql.executeZCQLQuery(`DELETE FROM dashboard_data WHERE record_id LIKE '${base}%'`);
+
+//         for (let i = 0; i < dealers.length; i += 5) {
+//             const batch = dealers.slice(i, i + 5);
+//             const esc   = JSON.stringify(batch).replace(/'/g, "''");
+//             await zcql.executeZCQLQuery(
+//                 `INSERT INTO dashboard_data (record_id, data) VALUES ('${base}_batch_${i}', '${esc}')`
+//             );
+//         }
+
+//         // 4. Return result with quality report
+//         return res.status(200).json({
+//             message:     'Success',
+//             dealerCount: dealers.length,
+//             quality:     quality.summary
+//         });
+
+//     } catch (err) {
+//         console.error('POST /process-scorecard error:', err);
+//         return res.status(500).json({ error: err.message });
+//     }
+// });
+
+// module.exports = app;
+
+
+// // ──────────────────────────────────────────────
+// // POST  /ask  — AI assistant (Gemini 2.0 Flash)
+// // ──────────────────────────────────────────────
+// app.post('/ask', async (req, res) => {
+//     try {
+//         const { question, dealers, currentState, history } = req.body;
+
+//         if (!question) return res.status(400).json({ error: 'No question provided' });
+//         if (!dealers || !dealers.length) return res.status(400).json({ error: 'No dealer data provided' });
+
+//         const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCso5BkK-NOVapxKczSfyOm_IHsk7LbH3U';
+//         const summary = buildDataSummary(dealers);
+
+//         const systemInstruction = `You are an AI assistant embedded inside the MG Motor Australia dealer network dashboard.
+// You have full access to all dealer performance data and can control the dashboard filters and tabs.
+
+// DASHBOARD STATE:
+// - Current tab: ${currentState.tab}
+// - Current region filter: ${currentState.region}
+// - Current PMA filter: ${currentState.pma}
+// - Current dealer filter: ${currentState.dealer}
+
+// AVAILABLE TABS: overview | sales | aftersales | network | doty
+// AVAILABLE REGIONS: All Regions | Eastern Region | Southern Region | Northern Region | Central Region | Western Region | North Island NZ | South Island NZ
+// AVAILABLE PMAS: All PMA | Metro A | Metro B | Provincial | Rural | NZ Metro | NZ Provincial | NZ Rural
+
+// ${summary}
+
+// RESPONSE FORMAT — always respond with ONLY valid JSON, no markdown fences:
+// {
+//   "reply": "Your answer with specific numbers and insights",
+//   "actions": [
+//     { "type": "setRegion", "value": "Eastern Region" },
+//     { "type": "setPma",    "value": "Metro A" },
+//     { "type": "setDealer", "value": "Alto Blacktown MG" },
+//     { "type": "setTab",    "value": "sales" }
+//   ]
+// }
+
+// RULES:
+// - "reply" is always required. Be specific — use real numbers, dealer names, rankings from the data.
+// - "actions" is optional. Only add actions the user actually asked for (filter/tab changes).
+// - Reset a filter by using "All Regions", "All PMA", or "All Dealers".
+// - If asked about a dealer → setDealer to that exact name + go to the relevant tab.
+// - If asked about a region → setRegion to that region.
+// - Tab routing: sales questions → "sales", aftersales/parts/CX → "aftersales", google/CI/network → "network", DOTY/rankings → "doty", general → "overview".
+// - For month/history questions: the data contains the most recently uploaded month. Tell the user which month is loaded and answer from it.
+// - Always include real numbers in your reply. Never say "I don't have access" — the full dataset is above.`;
+
+//         // Build Gemini contents array.
+//         // systemInstruction is only supported on v1beta; instead we prepend it
+//         // as the first user/model exchange so it works on the stable v1 endpoint.
+//         const contents = [
+//             { role: 'user',  parts: [{ text: systemInstruction }] },
+//             { role: 'model', parts: [{ text: 'Understood. I am ready to answer questions about the MG dealer network using the data provided.' }] },
+//         ];
+
+//         // Inject conversation history (alternating user/model turns)
+//         if (history && history.length) {
+//             history.forEach(msg => {
+//                 contents.push({
+//                     role: msg.role === 'user' ? 'user' : 'model',
+//                     parts: [{ text: msg.text }]
+//                 });
+//             });
+//         }
+
+//         // Add the current question
+//         contents.push({ role: 'user', parts: [{ text: question }] });
+
+//         const geminiRes = await fetch(
+//             `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
+//             {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({
+//                     contents,
+//                     generationConfig: {
+//                         temperature:     0.2,
+//                         maxOutputTokens: 1024,
+//                     }
+//                 })
+//             }
+//         );
+
+//         if (!geminiRes.ok) {
+//             const errText = await geminiRes.text();
+//             throw new Error(`Gemini API error ${geminiRes.status}: ${errText}`);
+//         }
+
+//         const geminiData = await geminiRes.json();
+//         const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+
+//         let parsed;
+//         try {
+//             const stripped = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+//             parsed = JSON.parse(stripped);
+//         } catch (_) {
+//             parsed = { reply: rawText, actions: [] };
+//         }
+
+//         return res.status(200).json({
+//             reply:   parsed.reply   || 'I could not generate a response.',
+//             actions: parsed.actions || []
+//         });
+
+//     } catch (err) {
+//         console.error('POST /ask error:', err);
+//         return res.status(500).json({ error: err.message });
+//     }
+// });
+
+// // Build a compact, token-efficient summary of all dealer data for the AI.
+// // The frontend sends the already-flattened masterList objects (d.name, d.salesActual, etc.)
+// // so we normalise both shapes here.
+// function buildDataSummary(dealers) {
+//     const total = dealers.length;
+
+//     // Normalise: handle both raw store shape {dealer:{name}, monthly:[...]}
+//     // and the flattened frontend shape {name, region, salesActual, ...}
+//     const norm = dealers.map(d => {
+//         if (d.dealer) {
+//             const m = d.monthly?.[0] || {};
+//             return {
+//                 name:        d.dealer.name,
+//                 region:      d.dealer.region,
+//                 pma:         d.dealer.pma,
+//                 salesActual: m.sales?.actual     || 0,
+//                 salesTarget: m.sales?.target     || 0,
+//                 mktMG:       m.market?.mg        || 0,
+//                 mktTotal:    m.market?.total     || 0,
+//                 partsActual: m.parts?.actual     || 0,
+//                 partsTarget: m.parts?.target     || 0,
+//                 googleScore: m.google?.score     || 0,
+//                 googleResp:  m.google?.responses || 0,
+//                 dotyTotal:   m.doty?.total       || 0,
+//                 ciStatus:    m.ci?.status        || 'No',
+//                 cxR: m.service?.response || 'N',
+//                 cxS: m.service?.score    || 'N',
+//                 cxL: m.service?.leadTime || 'N',
+//                 cxT: m.service?.training || 'N',
+//             };
+//         }
+//         // Flattened frontend shape
+//         return {
+//             name:        d.name        || '',
+//             region:      d.region      || '',
+//             pma:         d.pma         || '',
+//             salesActual: d.salesActual || 0,
+//             salesTarget: d.salesTarget || 0,
+//             mktMG:       d.mktMG       || 0,
+//             mktTotal:    d.mktTotal    || 0,
+//             partsActual: d.partsActual || 0,
+//             partsTarget: d.partsTarget || 0,
+//             googleScore: d.googleScore || 0,
+//             googleResp:  d.googleResp  || 0,
+//             dotyTotal:   d.dotyTotal   || 0,
+//             ciStatus:    d.ciStatus    || 'No',
+//             cxR: d.cxResponse ? 'Y' : 'N',
+//             cxS: d.cxScore    ? 'Y' : 'N',
+//             cxL: d.cxLeadTime ? 'Y' : 'N',
+//             cxT: d.cxTraining ? 'Y' : 'N',
+//         };
+//     });
+
+//     const rows = norm.map(d => [
+//         d.name,
+//         d.region,
+//         d.pma,
+//         `sales:${d.salesActual}/${d.salesTarget}`,
+//         `mkt:${d.mktMG}/${d.mktTotal}`,
+//         `parts:$${Math.round(d.partsActual/1000)}k/$${Math.round(d.partsTarget/1000)}k`,
+//         `google:${d.googleScore}(${d.googleResp}rev)`,
+//         `doty:${d.dotyTotal}pts`,
+//         `ci:${d.ciStatus}`,
+//         `cx:R${d.cxR}/S${d.cxS}/L${d.cxL}/T${d.cxT}`,
+//     ].join(' | '));
+
+//     const regions = {};
+//     norm.forEach(d => {
+//         const r = d.region || 'Unknown';
+//         if (!regions[r]) regions[r] = { count: 0, salesA: 0, salesT: 0, partsA: 0, dotyTop: null };
+//         regions[r].count++;
+//         regions[r].salesA += d.salesActual;
+//         regions[r].salesT += d.salesTarget;
+//         regions[r].partsA += d.partsActual;
+//         if (!regions[r].dotyTop || d.dotyTotal > regions[r].dotyTop.score) {
+//             regions[r].dotyTop = { name: d.name, score: d.dotyTotal };
+//         }
+//     });
+
+//     const regionSummary = Object.entries(regions).map(([r, v]) =>
+//         `  ${r}: ${v.count} dealers | sales ${v.salesA}/${v.salesT} (${v.salesT ? Math.round(v.salesA/v.salesT*100) : 0}% ach) | parts $${Math.round(v.partsA/1000)}k | top DOTY: ${v.dotyTop?.name} (${v.dotyTop?.score}pts)`
+//     ).join('\n');
+
+//     const dataMonth = dealers[0]?.monthly?.[0]?.month || 'Latest';
+
+//     return `DATA MONTH: ${dataMonth}
+// TOTAL DEALERS: ${total}
+
+// REGIONAL AGGREGATES:
+// ${regionSummary}
+
+// ALL DEALERS (name | region | pma | sales actual/target | mkt mg/total | parts $actual/$target | google score(reviews) | doty pts | ci status | cx R/S/L/T):
+// ${rows.join('\n')}`;
+// }
+
+// ============================================================
+// MG Motor AU — get-json function
+// Parses the dealer scorecard Excel directly using xlsx.
+// Includes a data-quality check before saving.
+// ============================================================
+// ============================================================
+// MG Motor AU — get-json function
+// Parses the dealer scorecard Excel directly using xlsx.
+// Includes a data-quality check before saving.
+// ============================================================
+
+// ============================================================
+// MG Motor AU — get-json function
+// Parses the dealer scorecard Excel directly using xlsx.
+// Includes a data-quality check before saving.
+// ============================================================
+
+const express    = require('express');
+const catalyst   = require('zcatalyst-sdk-node');
+const cors       = require('cors');
+const XLSX       = require('xlsx');
+const nodemailer = require('nodemailer');
+
+const app = express();
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(cors());
+
+// ──────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────
+const num = (v) => {
+    if (v === null || v === undefined || v === '#N/A' || v === '') return 0;
+    const n = Number(v);
+    return isNaN(n) ? 0 : n;
+};
+
+const yn = (v) => {
+    if (v === null || v === undefined || v === '#N/A') return 'N';
+    return String(v).trim().toUpperCase() === 'Y' ? 'Y' : 'N';
+};
+
+const clean = (v) => {
+    if (v === null || v === undefined || v === '#N/A') return '';
+    return String(v).trim();
+};
+
+const hasValue = (v) =>
+    v !== null && v !== undefined && v !== '#N/A' && v !== '' && v !== '0' && Number(v) !== 0;
+
+// Returns the col index of the latest month that has data (default behaviour)
+const findLatestMonthCol = (rows, step, startCol) => {
+    let lastDataCol = startCol;
+    for (let col = startCol; col < (rows[0] || []).length; col += step) {
+        const actualCol = col + 1;
+        const hasData = rows.slice(2).some(r => hasValue(r[actualCol]));
+        if (hasData) lastDataCol = col;
+    }
+    return lastDataCol;
+};
+
+// Returns the col index for a specific YYYY-MM target, or falls back to latest
+const findMonthCol = (rows, step, startCol, targetYM) => {
+    if (!targetYM) return findLatestMonthCol(rows, step, startCol);
+    for (let col = startCol; col < (rows[0] || []).length; col += step) {
+        const v = rows[0][col];
+        if (!v) continue;
+        try {
+            const d = new Date(v);
+            const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            if (ym === targetYM) return col;
+        } catch (_) { }
+    }
+    // Target month not found — fall back to latest
+    return findLatestMonthCol(rows, step, startCol);
+};
+
+// Get all available months from a sheet with data counts
+const getAvailableMonths = (rows, step, startCol) => {
+    const months = [];
+    for (let col = startCol; col < (rows[0] || []).length; col += step) {
+        const v = rows[0][col];
+        if (!v) continue;
+        try {
+            const d = new Date(v);
+            const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            const label = d.toLocaleString('en-AU', { month: 'short', year: 'numeric' });
+            const actualCol = col + 1;
+            const dealersWithData = rows.slice(2).filter(r => r[actualCol] && r[actualCol] !== '#N/A' && Number(r[actualCol]) !== 0).length;
+            months.push({ ym, label, col, dealersWithData });
+        } catch (_) { }
+    }
+    return months;
+};
+
+const buildLookup = (rows, keyCol = 1) => {
+    const map = {};
+    for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || !row[0]) continue;
+        const key = clean(row[keyCol]);
+        const nameKey = 'name:' + clean(row[0]).toLowerCase();
+        if (key && key !== '#N/A') map[key] = row;
+        if (nameKey !== 'name:') map[nameKey] = row;
+    }
+    return map;
+};
+
+const lookup = (map, code, name) => {
+    if (code && code !== '#N/A' && map[code]) return map[code];
+    return map['name:' + (name || '').toLowerCase()] || null;
+};
+
+const monthLabel = (rows, col) => {
+    const v = rows[0] && rows[0][col];
+    if (!v) return 'Latest';
+    try {
+        const d = new Date(v);
+        if (!isNaN(d)) return d.toLocaleString('en-AU', { month: 'short', year: '2-digit' });
+    } catch (_) { }
+    return String(v);
+};
+
+// ──────────────────────────────────────────────
+// DATA QUALITY CHECK
+// ──────────────────────────────────────────────
+//
+// Thresholds are set based on what a healthy real scorecard actually looks like.
+// Some sheets (CX, Google) naturally have lower coverage because NZ dealers and
+// A "WARN" status saves but flags the issue to the user.
+//
+const runQualityCheck = (dealers) => {
+    const total = dealers.length;
+    const counts = {
+        dealers: total,
+        sales_actual: 0, sales_target: 0,
+        mkt_total: 0, parts_actual: 0, parts_target: 0,
+        ci: 0, doty_total: 0,
+        cx_score: 0, google_score: 0,
+    };
+    dealers.forEach(d => {
+        const m = d.monthly[0];
+        if (m.sales.actual > 0) counts.sales_actual++;
+        if (m.sales.target > 0) counts.sales_target++;
+        if (m.market.total > 0) counts.mkt_total++;
+        if (m.parts.actual > 0) counts.parts_actual++;
+        if (m.parts.target > 0) counts.parts_target++;
+        if ((m.ci.status && m.ci.status !== 'No') || m.ci.pts > 0) counts.ci++;
+        if (m.doty.total > 0) counts.doty_total++;
+        if (m.service.score === 'Y' || m.service.response === 'Y') counts.cx_score++;
+        if (m.google.score > 0) counts.google_score++;
+    });
+    const summary = {};
+    for (const [field, count] of Object.entries(counts)) {
+        summary[field] = field === 'dealers'
+            ? count
+            : { count, total, pct: total > 0 ? Math.round((count / total) * 100) : 0 };
+    }
+    return { summary };
+};
+
+
+// ──────────────────────────────────────────────
+// CORE PARSER
+// ──────────────────────────────────────────────
+const parseScorecard = (base64Data, targetMonth = null) => {
+    const buf = Buffer.from(base64Data, 'base64');
+    const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
+
+    const sheetRows = (name) => {
+        const ws = wb.Sheets[name];
+        if (!ws) return [];
+        return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
+    };
+
+    const dealerListRows = sheetRows('DEALER LIST');
+    const salesRows = sheetRows('SALES');
+    const mktRows = sheetRows('MKT SHARE');
+    const stockRows = sheetRows('STOCK');
+    const partsRows = sheetRows('PARTS (2)');
+    const cxRows = sheetRows('SERVICE CX');
+    const googleRows = sheetRows('GOOGLE REVIEWS');
+    const ciRows = sheetRows('CI');
+    const dotyRows = sheetRows('DOTY');
+
+    const salesMap = buildLookup(salesRows);
+    const mktMap = buildLookup(mktRows);
+    const stockMap = buildLookup(stockRows);
+    const partsMap = buildLookup(partsRows);
+    const cxMap = buildLookup(cxRows);
+    const googleMap = buildLookup(googleRows, 2);
+    const ciMap = buildLookup(ciRows);
+    const dotyMap = buildLookup(dotyRows);
+
+    // Use targetMonth (YYYY-MM) if provided, otherwise auto-detect latest
+    const salesMonthCol = findMonthCol(salesRows, 2, 2, targetMonth);
+    const mktMonthCol = findMonthCol(mktRows, 2, 2, targetMonth);
+    const partsMonthCol = findMonthCol(partsRows, 2, 2, targetMonth);
+    const stockMonthCol = findLatestMonthCol(stockRows, 3, 2); // stock has no month selector
+    const cxMonthCol = findMonthCol(cxRows, 4, 2, targetMonth);
+
+    const dealers = [];
+
+    for (let i = 1; i < dealerListRows.length; i++) {
+        const dl = dealerListRows[i];
+        if (!dl || !dl[0]) continue;
+
+        const name = clean(dl[0]);
+        const code = clean(dl[1]);
+        const region = clean(dl[2]);
+        const pma = clean(dl[3]);
+        if (!name) continue;
+
+        const sRow = lookup(salesMap, code, name);
+        const mRow = lookup(mktMap, code, name);
+        const stRow = lookup(stockMap, code, name);
+        const pRow = lookup(partsMap, code, name);
+        const cxRow = lookup(cxMap, code, name);
+        const gRow = lookup(googleMap, code, name);
+        const ciRow = lookup(ciMap, code, name);
+        const dRow = lookup(dotyMap, code, name);
+
+        dealers.push({
+            dealer: { name, region, pma },
+            meta: { recordId: code || String(i) },
+            monthly: [{
+                month: monthLabel(salesRows, salesMonthCol),
+                sales: { target: num(sRow?.[salesMonthCol]), actual: num(sRow?.[salesMonthCol + 1]) },
+                market: { total: num(mRow?.[mktMonthCol]), mg: num(mRow?.[mktMonthCol + 1]) },
+                stock: { ice: num(stRow?.[stockMonthCol]), hev: num(stRow?.[stockMonthCol + 1]), bev: num(stRow?.[stockMonthCol + 2]) },
+                parts: { target: num(pRow?.[partsMonthCol]), actual: num(pRow?.[partsMonthCol + 1]) },
+                service: { response: yn(cxRow?.[cxMonthCol]), score: yn(cxRow?.[cxMonthCol + 1]), leadTime: yn(cxRow?.[cxMonthCol + 2]), training: yn(cxRow?.[cxMonthCol + 3]) },
+                google: { score: num(gRow?.[3]), responses: num(gRow?.[4]) },
+                ci: { status: clean(ciRow?.[2]) || 'No', pts: num(ciRow?.[3]) },
+                doty: { sales: num(dRow?.[3]), aftersales: num(dRow?.[4]), google: num(dRow?.[5]), ci: num(dRow?.[6]), total: num(dRow?.[7]) }
+            }]
+        });
+    }
+
+    return dealers;
+};
+
+
+// ──────────────────────────────────────────────
+// POST  /get-months  — parse file, return available months only (no storage)
+// ──────────────────────────────────────────────
+app.post('/get-months', async (req, res) => {
+    try {
+        const { fileData } = req.body;
+        if (!fileData) return res.status(400).json({ error: 'No file data' });
+
+        const buf = Buffer.from(fileData, 'base64');
+        const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
+
+        const sheetRows = (name) => {
+            const ws = wb.Sheets[name];
+            if (!ws) return [];
+            return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
+        };
+
+        const salesRows = sheetRows('SALES');
+        const cxRows = sheetRows('SERVICE CX');
+        const partsRows = sheetRows('PARTS (2)');
+
+        // Build union of all months that appear in Sales (primary source)
+        const salesMonths = getAvailableMonths(salesRows, 2, 2).filter(m => m.dealersWithData > 0);
+        const cxMonths = getAvailableMonths(cxRows, 4, 2).filter(m => m.dealersWithData > 0);
+        const partsMonths = getAvailableMonths(partsRows, 2, 2).filter(m => m.dealersWithData > 0);
+
+        // Annotate each sales month with coverage in other sheets
+        const months = salesMonths.map(m => ({
+            ym: m.ym,
+            label: m.label,
+            coverage: {
+                sales: m.dealersWithData,
+                parts: (partsMonths.find(p => p.ym === m.ym) || {}).dealersWithData || 0,
+                cx: (cxMonths.find(p => p.ym === m.ym) || {}).dealersWithData || 0,
+            }
+        }));
+
+        return res.status(200).json({ months });
+    } catch (err) {
+        console.error('POST /get-months error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// ──────────────────────────────────────────────
+// GET  /list-scorecards  — return all stored scorecard IDs
+// ──────────────────────────────────────────────
+app.get('/list-scorecards', async (req, res) => {
+    try {
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const result = await zcql.executeZCQLQuery('SELECT record_id FROM dashboard_data');
+        const seen = new Set();
+        if (result && result.length > 0) {
+            result.forEach(r => {
+                const row = r.dashboard_data || r.DASHBOARD_DATA || Object.values(r)[0];
+                const rid = row?.record_id || '';
+                // New format: SCORECARD_MAR_2025_batch_0  → base = SCORECARD_MAR_2025
+                const newFmt = rid.match(/^(SCORECARD_[A-Z]{3}_\d{4})(?:_batch_\d+)?$/);
+                // Old format: SCORECARD_01_batch_0        → base = SCORECARD_01
+                const oldFmt = rid.match(/^(SCORECARD_\d+)(?:_batch_\d+)?$/);
+                const m = newFmt || oldFmt;
+                if (m) seen.add(m[1]);
+            });
+        }
+        return res.status(200).json({ ids: [...seen] });
+    } catch (err) {
+        console.error('GET /list-scorecards error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// ──────────────────────────────────────────────
+// GET  /  — serve dealers from data store
+// ──────────────────────────────────────────────
+app.get('/', async (req, res) => {
+    try {
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+
+        const requestedId = req.query?.id;
+        if (!requestedId) return res.status(400).json({ error: 'Missing ID' });
+
+        // Fetch only rows that belong to this scorecard (record_id starts with the requested ID)
+        const result = await zcql.executeZCQLQuery('SELECT * FROM dashboard_data');
+        let allDealers = [];
+
+        if (result && result.length > 0) {
+            result.forEach(r => {
+                try {
+                    const row = r.dashboard_data || r.DASHBOARD_DATA || Object.values(r)[0];
+                    // Only include rows whose record_id belongs to this scorecard
+                    if (row && row.record_id && !row.record_id.startsWith(requestedId)) return;
+                    if (row && row.data) {
+                        const parsed = JSON.parse(row.data);
+                        if (Array.isArray(parsed)) allDealers = allDealers.concat(parsed);
+                    }
+                } catch (e) { console.log('Skipping row:', e.message); }
+            });
+        }
+
+        return res.status(200).json(allDealers);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+
+// ──────────────────────────────────────────────
+// POST  /process-scorecard  — parse, quality-check, store
+// ──────────────────────────────────────────────
+app.post('/process-scorecard', async (req, res) => {
+    try {
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+
+        const { fileData } = req.body;
+        if (!fileData) return res.status(400).json({ error: 'No file data received' });
+
+        // 1. Parse — use targetMonth if provided
+        const targetMonth = req.body.targetMonth || null;
+        console.log('Parsing Excel for month:', targetMonth || 'latest');
+        const dealers = parseScorecard(fileData, targetMonth);
+        console.log(`Parsed ${dealers.length} dealers`);
+
+        // 2. Quality check — informational only, never blocks
+        const quality = runQualityCheck(dealers);
+        console.log('Quality summary:', JSON.stringify(quality.summary));
+
+        // 3. Derive scorecard ID from selected month: SCORECARD_MAR_2025
+        const MONTH_ABBR = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        let base;
+        if (targetMonth) {
+            const [yearStr, monthStr] = targetMonth.split('-');
+            const abbr = MONTH_ABBR[parseInt(monthStr, 10) - 1] || monthStr;
+            base = `SCORECARD_${abbr}_${yearStr}`;
+        } else {
+            const m0 = dealers[0]?.monthly?.[0]?.month || 'LATEST';
+            base = `SCORECARD_${m0.replace(/[\s']/g, '_').toUpperCase()}`;
+        }
+        console.log(`Using scorecard ID: ${base}`);
+
+        // 4. Delete existing batch rows for this month (upsert — replaces old data, keeps pinned viz)
+        try {
+            const toDelete = await zcql.executeZCQLQuery('SELECT record_id FROM dashboard_data');
+            if (toDelete && toDelete.length > 0) {
+                for (const r of toDelete) {
+                    const row = r.dashboard_data || r.DASHBOARD_DATA || Object.values(r)[0];
+                    const rid = row?.record_id || '';
+                    if (rid.startsWith(base + '_batch_')) {
+                        await zcql.executeZCQLQuery(
+                            `DELETE FROM dashboard_data WHERE record_id = '${rid}'`
+                        );
+                    }
+                }
+            }
+        } catch (e) {
+            console.log('Pre-delete step skipped:', e.message);
+        }
+
+        // 5. Insert in batches of 5
+        for (let i = 0; i < dealers.length; i += 5) {
+            const batch = dealers.slice(i, i + 5);
+            const esc = JSON.stringify(batch).replace(/'/g, "''");
+            await zcql.executeZCQLQuery(
+                `INSERT INTO dashboard_data (record_id, data) VALUES ('${base}_batch_${i}', '${esc}')`
+            );
+        }
+
+        // 6. Return result with quality report and the dashboard link
+        return res.status(200).json({
+            message: 'Success',
+            dealerCount: dealers.length,
+            scorecardId: base,
+            targetMonth: targetMonth || dealers[0]?.monthly?.[0]?.month || 'Latest',
+            quality: quality.summary
+        });
+
+    } catch (err) {
+        console.error('POST /process-scorecard error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// ──────────────────────────────────────────────
+// SMTP transporter (Gmail)
+// ──────────────────────────────────────────────
+const mailer = nodemailer.createTransport({
+    host:   'smtp.gmail.com',
+    port:   465,
+    secure: true,
+    auth: {
+        user: process.env.SMTP_USER || 'sherlockloke@gmail.com',
+        pass: process.env.SMTP_PASS || 'ryvm bvoa rfnv npxt',
+    },
+});
+
+// ──────────────────────────────────────────────
+// POST  /send-email  — send dashboard report
+// ──────────────────────────────────────────────
+app.post('/send-email', async (req, res) => {
+    try {
+        const { to, toName, subject, format, pdfBase64, dealers, dashboardMonth, currentState } = req.body;
+        if (!to)      return res.status(400).json({ error: 'Recipient email is required' });
+        if (!dealers) return res.status(400).json({ error: 'No dealer data provided' });
+        const sendFormat = format === 'pdf' ? 'pdf' : 'link';
+        const dashboardUrl = 'https://mg-motor-au-re-60060703876.development.catalystserverless.in/app/index.html';
+
+        // Build a readable summary for the email body
+        const month  = dashboardMonth || 'Latest';
+        const region = currentState?.region || 'All Regions';
+        const tab    = currentState?.tab    || 'overview';
+        const total  = dealers.length;
+
+        const totalSalesA = dealers.reduce((s, d) => s + (d.salesActual  || 0), 0);
+        const totalSalesT = dealers.reduce((s, d) => s + (d.salesTarget  || 0), 0);
+        const totalMktMG  = dealers.reduce((s, d) => s + (d.mktMG        || 0), 0);
+        const totalMktTot = dealers.reduce((s, d) => s + (d.mktTotal     || 0), 0);
+        const totalParts  = dealers.reduce((s, d) => s + (d.partsActual  || 0), 0);
+        const achPct      = totalSalesT ? Math.round(totalSalesA / totalSalesT * 100) : 0;
+        const mktPct      = totalMktTot ? (totalMktMG / totalMktTot * 100).toFixed(1) : '0.0';
+
+        const top5 = [...dealers]
+            .sort((a, b) => (b.salesActual || 0) - (a.salesActual || 0))
+            .slice(0, 5);
+
+        const top5Rows = top5.map(d =>
+            `<tr>
+              <td style="padding:6px 12px;border-bottom:1px solid #2a2a2a">${d.name}</td>
+              <td style="padding:6px 12px;border-bottom:1px solid #2a2a2a">${d.region || '-'}</td>
+              <td style="padding:6px 12px;border-bottom:1px solid #2a2a2a;text-align:right">${d.salesActual || 0}</td>
+              <td style="padding:6px 12px;border-bottom:1px solid #2a2a2a;text-align:right">${d.salesTarget || 0}</td>
+            </tr>`
+        ).join('');
+
+        // Shared email header + KPI cards + top 5 table (same for both formats)
+        const kpiBlock = `
+    <!-- KPI Cards -->
+    <tr>
+      <td style="background:#141414;padding:24px 32px">
+        <table width="100%" cellspacing="8">
+          <tr>
+            <td style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;padding:16px 20px;width:25%">
+              <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px">Sales Volume</div>
+              <div style="font-size:26px;font-weight:800;color:#C8102E;margin:6px 0">${totalSalesA}</div>
+              <div style="font-size:11px;color:#555">Target ${totalSalesT} · ${achPct}% ach</div>
+            </td>
+            <td style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;padding:16px 20px;width:25%">
+              <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px">Market Share</div>
+              <div style="font-size:26px;font-weight:800;color:#C8102E;margin:6px 0">${mktPct}%</div>
+              <div style="font-size:11px;color:#555">${totalMktMG} of ${totalMktTot} TIV</div>
+            </td>
+            <td style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;padding:16px 20px;width:25%">
+              <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px">Parts Revenue</div>
+              <div style="font-size:26px;font-weight:800;color:#C8102E;margin:6px 0">$${Math.round(totalParts/1000)}k</div>
+              <div style="font-size:11px;color:#555">Actual this month</div>
+            </td>
+            <td style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;padding:16px 20px;width:25%">
+              <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px">Network</div>
+              <div style="font-size:26px;font-weight:800;color:#C8102E;margin:6px 0">${total}</div>
+              <div style="font-size:11px;color:#555">Active dealers</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <!-- Top 5 Dealers -->
+    <tr>
+      <td style="background:#141414;padding:0 32px 24px">
+        <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Top 5 Dealers by Sales</div>
+        <table width="100%" style="border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#1e1e1e">
+              <th style="padding:8px 12px;text-align:left;color:#aaa;font-weight:600;border-bottom:1px solid #333">Dealer</th>
+              <th style="padding:8px 12px;text-align:left;color:#aaa;font-weight:600;border-bottom:1px solid #333">Region</th>
+              <th style="padding:8px 12px;text-align:right;color:#aaa;font-weight:600;border-bottom:1px solid #333">Actual</th>
+              <th style="padding:8px 12px;text-align:right;color:#aaa;font-weight:600;border-bottom:1px solid #333">Target</th>
+            </tr>
+          </thead>
+          <tbody>${top5Rows}</tbody>
+        </table>
+      </td>
+    </tr>`;
+
+        const headerBlock = `
+<!DOCTYPE html><html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#0d0d0d;font-family:'Segoe UI',Arial,sans-serif;color:#e5e5e5">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;margin:32px auto">
+    <tr>
+      <td style="background:linear-gradient(135deg,#C8102E,#8b0000);padding:28px 32px;border-radius:12px 12px 0 0">
+        <table width="100%"><tr>
+          <td>
+            <div style="font-size:11px;letter-spacing:3px;color:#ffcccc;text-transform:uppercase;margin-bottom:6px">MG Motor Australia</div>
+            <div style="font-size:22px;font-weight:800;color:#fff">Network Command Center</div>
+            <div style="font-size:13px;color:#ffaaaa;margin-top:4px">Performance Analytics — ${month}</div>
+          </td>
+          <td style="text-align:right;font-size:36px;color:#ffffff44">◈</td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td style="background:#1a1a1a;padding:12px 32px;border-bottom:1px solid #2a2a2a">
+        <span style="font-size:12px;color:#888">View: <strong style="color:#ccc">${region}</strong>
+        &nbsp;·&nbsp; Tab: <strong style="color:#ccc">${tab}</strong>
+        &nbsp;·&nbsp; Dealers: <strong style="color:#ccc">${total}</strong></span>
+      </td>
+    </tr>`;
+
+        const footerBlock = `
+    <tr>
+      <td style="background:#0d0d0d;padding:16px 32px;border-radius:0 0 12px 12px;border-top:1px solid #222">
+        <span style="font-size:11px;color:#555">Sent from MG Motor Australia Network Command Center
+        &nbsp;·&nbsp; ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })} AEST</span>
+      </td>
+    </tr>
+  </table></body></html>`;
+
+        // Format-specific middle section
+        const linkSection = `
+    <tr>
+      <td style="background:#141414;padding:24px 32px;text-align:center">
+        <a href="${dashboardUrl}" style="display:inline-block;background:#C8102E;color:#fff;font-weight:700;font-size:14px;padding:14px 32px;border-radius:8px;text-decoration:none;letter-spacing:0.5px">Open Live Dashboard →</a>
+        <div style="margin-top:12px;font-size:11px;color:#555">${dashboardUrl}</div>
+      </td>
+    </tr>`;
+
+        const pdfSection = `
+    <tr>
+      <td style="background:#141414;padding:20px 32px;text-align:center">
+        <div style="font-size:13px;color:#aaa">📎 The full dashboard is attached as a PDF to this email.</div>
+      </td>
+    </tr>`;
+
+        const html = sendFormat === 'pdf'
+            ? headerBlock + kpiBlock + pdfSection + footerBlock
+            : headerBlock + kpiBlock + linkSection + footerBlock;
+
+        const finalSubject = subject || `MG Network Dashboard — ${region} · ${month}`;
+        const greeting     = toName ? `Hi ${toName},` : 'Hi,';
+        const plainText    = `${greeting}\n\nMG Motor Australia — Network Dashboard\nMonth: ${month} | Region: ${region}\nSales: ${totalSalesA}/${totalSalesT} (${achPct}% achieved)\nMarket Share: ${mktPct}%\nParts: $${Math.round(totalParts/1000)}k | Dealers: ${total}\n\n${sendFormat === 'pdf' ? 'See attached PDF for the full dashboard.' : `Open dashboard: ${dashboardUrl}`}\n\n— MG Motor Network Command Center`;
+
+        const attachments = (sendFormat === 'pdf' && pdfBase64)
+            ? [{ filename: `mg-dashboard-${month.replace(/\s/g,'-')}.pdf`, content: Buffer.from(pdfBase64, 'base64'), contentType: 'application/pdf' }]
+            : [];
+
+        await mailer.sendMail({
+            from: '"MG Motor Network" <sherlockloke@gmail.com>',
+            to,
+            subject: finalSubject,
+            html,
+            text: plainText,
+            attachments,
+        });
+
+        return res.status(200).json({ success: true, message: `Dashboard report sent to ${to}` });
+
+    } catch (err) {
+        console.error('POST /send-email error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────
+// POST  /ask-stream  — streaming AI assistant (SSE)
+// Streams reply text in real-time so the frontend can display
+// text progressively and start TTS after the first sentence.
+// ─────────────────────────────────────────────────────────────
+app.post('/ask-stream', async (req, res) => {
+    // SSE headers — must be set before any write
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.flushHeaders();
+
+    const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+
+    // Close stream cleanly if client disconnects
+    let closed = false;
+    req.on('close', () => { closed = true; });
+
+    try {
+        const { question, dealers, currentState, history, allMonthsData, dashboardMonth } = req.body;
+
+        if (!question) { send({ error: 'No question provided' }); return res.end(); }
+        if (!dealers || !dealers.length) { send({ error: 'No dealer data provided' }); return res.end(); }
+
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCso5BkK-NOVapxKczSfyOm_IHsk7LbH3U';
+
+        const dashSummary = buildDataSummary(dealers, dashboardMonth || 'current');
+
+        let otherMonthsSummary = '';
+        if (allMonthsData && Object.keys(allMonthsData).length > 0) {
+            const otherMonths = Object.entries(allMonthsData)
+                .filter(([month]) => month !== dashboardMonth)
+                .map(([month, mDealers]) => {
+                    if (!mDealers || !mDealers.length) return '';
+                    return `\n--- HISTORICAL DATA: ${month} ---\n${buildDataSummary(mDealers, month)}`;
+                }).filter(Boolean).join('\n');
+            if (otherMonths) otherMonthsSummary = `\n\nHISTORICAL MONTHS DATA (read-only — do NOT trigger dashboard actions for these months):${otherMonths}`;
+        }
+
+        // Output format uses a plain-text reply followed by a separator, which
+        // lets us stream the reply to the client immediately without waiting for
+        // the whole JSON object to be assembled.
+        const systemInstruction = `You are an AI assistant embedded inside the MG Motor Australia dealer network dashboard.
+You have full access to all dealer performance data across all uploaded months.
+
+DASHBOARD STATE:
+- Current tab: ${currentState.tab}
+- Current region filter: ${currentState.region}
+- Current PMA filter: ${currentState.pma}
+- Current dealer filter: ${currentState.dealer}
+- Dashboard month: ${dashboardMonth || 'latest'}
+
+AVAILABLE TABS: overview | sales | aftersales | network | doty
+AVAILABLE REGIONS: All Regions | Eastern Region | Southern Region | Northern Region | Central Region | Western Region | North Island NZ | South Island NZ
+AVAILABLE PMAS: All PMA | Metro A | Metro B | Provincial | Rural | NZ Metro | NZ Provincial | NZ Rural
+
+--- CURRENT DASHBOARD DATA: ${dashboardMonth || 'latest'} ---
+${dashSummary}${otherMonthsSummary}
+
+RESPONSE FORMAT — output EXACTLY in this two-part format, nothing else:
+<your plain-text answer here, multiple lines allowed>
+<<<ACTIONS>>>
+{"actions":[...],"crossMonth":false}
+
+EXAMPLES:
+Eastern Region achieved 87% of its sales target this month with 142 units sold across 8 dealers.
+<<<ACTIONS>>>
+{"actions":[{"type":"setRegion","value":"Eastern Region"},{"type":"setTab","value":"sales"}],"crossMonth":false}
+
+Sales were strong across the board.
+<<<ACTIONS>>>
+{"actions":[],"crossMonth":false}
+
+CRITICAL RULES:
+- Your text answer must come FIRST, before <<<ACTIONS>>>.
+- Always end with <<<ACTIONS>>> followed by the JSON on the next line.
+- actions array may be empty [] but must always be present.
+- crossMonth: true only when answering about a historical month (do NOT add dashboard actions in that case).
+- Reset a filter: use "All Regions", "All PMA", or "All Dealers".
+- Tab routing: sales → "sales", aftersales/parts/CX → "aftersales", google/CI/network → "network", DOTY/rankings → "doty".
+- Always use real numbers from the data. Never say "I don't have access".
+- EMAIL: If the user wants to send/email/share the dashboard, extract email address AND format ("link" or "pdf"). If format not mentioned, ask before emitting sendEmail. When both known, add: {"type":"sendEmail","to":"...","toName":"...","format":"link|pdf","captureRegion":"...","capturePma":"...","captureDealer":"..."}.`;
+
+        const contents = [
+            { role: 'user', parts: [{ text: systemInstruction }] },
+            { role: 'model', parts: [{ text: 'Understood. I will respond with plain-text first, then <<<ACTIONS>>> with the JSON.' }] },
+        ];
+
+        if (history && history.length) {
+            history.forEach(msg => {
+                contents.push({ role: msg.role === 'user' ? 'user' : 'model', parts: [{ text: msg.text }] });
+            });
+        }
+        contents.push({ role: 'user', parts: [{ text: question }] });
+
+        const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents, generationConfig: { temperature: 0.2, maxOutputTokens: 4096 } })
+            }
+        );
+
+        if (!geminiRes.ok) {
+            const errText = await geminiRes.text();
+            send({ error: `Gemini error ${geminiRes.status}: ${errText}` });
+            return res.end();
+        }
+
+        const reader = geminiRes.body.getReader();
+        const decoder = new TextDecoder();
+        let sseBuffer = '';
+        let fullText  = '';
+        let replyDone = false; // true once we've passed <<<ACTIONS>>>
+
+        while (true) {
+            if (closed) break;
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            sseBuffer += decoder.decode(value, { stream: true });
+            const lines = sseBuffer.split('\n');
+            sseBuffer = lines.pop(); // keep incomplete line
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const dataStr = line.slice(6).trim();
+                if (!dataStr || dataStr === '[DONE]') continue;
+
+                let chunk = '';
+                try {
+                    const parsed = JSON.parse(dataStr);
+                    chunk = parsed.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                } catch (_) { continue; }
+
+                if (!chunk) continue;
+                fullText += chunk;
+
+                if (!replyDone) {
+                    if (fullText.includes('<<<ACTIONS>>>')) {
+                        replyDone = true;
+                        // Send the portion of this chunk that's still reply text
+                        const chunkReplyPart = chunk.includes('<<<ACTIONS>>>')
+                            ? chunk.split('<<<ACTIONS>>>')[0]
+                            : '';
+                        if (chunkReplyPart.trim()) send({ chunk: chunkReplyPart });
+                    } else {
+                        send({ chunk });
+                    }
+                }
+            }
+        }
+
+        // Parse the complete response
+        const sepIdx    = fullText.indexOf('<<<ACTIONS>>>');
+        const replyText = (sepIdx >= 0 ? fullText.slice(0, sepIdx) : fullText).trim();
+        let actions = [], crossMonth = false;
+
+        if (sepIdx >= 0) {
+            try {
+                const actionsStr = fullText.slice(sepIdx + 13).trim();
+                const actParsed  = JSON.parse(actionsStr);
+                actions    = actParsed.actions    || [];
+                crossMonth = actParsed.crossMonth || false;
+            } catch (_) {}
+        }
+
+        send({ done: true, reply: replyText, actions, crossMonth });
+        res.end();
+
+    } catch (err) {
+        console.error('POST /ask-stream error:', err);
+        send({ error: err.message });
+        res.end();
+    }
+});
+
+// ──────────────────────────────────────────────
+// POST  /ask  — AI assistant (Gemini 2.0 Flash)
+// ──────────────────────────────────────────────
+app.post('/ask', async (req, res) => {
+    try {
+        const { question, dealers, currentState, history, allMonthsData, dashboardMonth } = req.body;
+
+        if (!question) return res.status(400).json({ error: 'No question provided' });
+        if (!dealers || !dealers.length) return res.status(400).json({ error: 'No dealer data provided' });
+
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyCso5BkK-NOVapxKczSfyOm_IHsk7LbH3U';
+
+        // Build current dashboard month summary
+        const dashSummary = buildDataSummary(dealers, dashboardMonth || 'current');
+
+        // Build summaries for all other months if provided
+        let otherMonthsSummary = '';
+        if (allMonthsData && Object.keys(allMonthsData).length > 0) {
+            const otherMonths = Object.entries(allMonthsData)
+                .filter(([month]) => month !== dashboardMonth)
+                .map(([month, mDealers]) => {
+                    if (!mDealers || !mDealers.length) return '';
+                    const s = buildDataSummary(mDealers, month);
+                    return `\n--- HISTORICAL DATA: ${month} ---\n${s}`;
+                })
+                .filter(Boolean)
+                .join('\n');
+            if (otherMonths) otherMonthsSummary = `\n\nHISTORICAL MONTHS DATA (read-only — do NOT trigger dashboard actions for these months):${otherMonths}`;
+        }
+
+        const systemInstruction = `You are an AI assistant embedded inside the MG Motor Australia dealer network dashboard.
+You have full access to all dealer performance data across all uploaded months.
+
+DASHBOARD STATE:
+- Current tab: ${currentState.tab}
+- Current region filter: ${currentState.region}
+- Current PMA filter: ${currentState.pma}
+- Current dealer filter: ${currentState.dealer}
+- Dashboard month: ${dashboardMonth || 'latest'}
+
+AVAILABLE TABS: overview | sales | aftersales | network | doty
+AVAILABLE REGIONS: All Regions | Eastern Region | Southern Region | Northern Region | Central Region | Western Region | North Island NZ | South Island NZ
+AVAILABLE PMAS: All PMA | Metro A | Metro B | Provincial | Rural | NZ Metro | NZ Provincial | NZ Rural
+
+--- CURRENT DASHBOARD DATA: ${dashboardMonth || 'latest'} ---
+${dashSummary}${otherMonthsSummary}
+
+RESPONSE FORMAT — always respond with ONLY valid JSON, no markdown fences:
+{
+  "reply": "Your answer with specific numbers and insights",
+  "actions": []
+}
+
+CRITICAL RULES:
+- "reply" is always required. Be specific — use real numbers, dealer names, rankings from the data.
+- "actions" is optional array. Only include actions for the CURRENT dashboard month (${dashboardMonth || 'latest'}).
+- NEVER emit actions if the user is asking about a different/historical month — just answer in "reply".
+- Reset a filter: use "All Regions", "All PMA", or "All Dealers".
+- If asked about a dealer → setDealer + go to relevant tab.
+- Tab routing: sales → "sales", aftersales/parts/CX → "aftersales", google/CI/network → "network", DOTY/rankings → "doty", general → "overview".
+- Always include real numbers. Never say "I don't have access" — the full dataset is above.
+
+ACTION TYPES:
+{ "type": "setRegion", "value": "Eastern Region" }
+{ "type": "setPma", "value": "Metro A" }
+{ "type": "setDealer", "value": "Dealer Name" }
+{ "type": "setTab", "value": "sales" }
+{ "type": "sendEmail", "to": "email@example.com", "toName": "Name", "format": "link or pdf" }
+{ "type": "visualize", "spec": { "title": "...", "panels": [...] } }
+
+VISUALIZATION RULES — use "visualize" action whenever user asks to chart, plot, compare, visualize, or show a graph:
+- Available chartTypes: "bar", "pie", "table", "kpi", "scatter"
+- Available groupBy values: "region", "pma", "dealer"
+- Available metrics: salesActual, salesTarget, salesAch, mktMG, mktTotal, mktShare, partsActual, partsTarget, partsAch, googleScore, googleReviews, dotyTotal, dotySales, dotyAftersales, dotyGoogle, dotyCi
+- filter object: { "regions": ["Western Region", "Southern Region"], "pmas": ["Metro A"], "dealers": ["Dealer Name"] } — CRITICAL: when user asks to compare or show SPECIFIC regions/PMAs/dealers, you MUST populate the filter with only those items. An empty filter {} means show ALL. Never use empty filter when user named specific regions.
+- Always include "sortBy" and "sortDir" for dealer-level charts, and "limit" (max 20 for dealer groupBy)
+- For "all dealers" comparisons: groupBy "region" to keep it readable, not groupBy "dealer"
+
+VISUALIZATION EXAMPLES:
+
+User: "Show sales by region as a bar chart"
+actions: [{"type":"visualize","spec":{"title":"Sales by Region","panels":[{"id":"p1","chartType":"bar","title":"Sales Actual vs Target","groupBy":"region","filter":{},"metrics":["salesActual","salesTarget"],"sortBy":"salesActual","sortDir":"desc"},{"id":"p2","chartType":"table","title":"Regional Detail","groupBy":"region","filter":{},"metrics":["salesActual","salesTarget","salesAch"],"sortBy":"salesActual","sortDir":"desc"}]}}]
+
+User: "Compare Western Region vs Southern Region sales"
+actions: [{"type":"visualize","spec":{"title":"Western vs Southern Region","panels":[{"id":"p1","chartType":"bar","title":"Sales Comparison","groupBy":"region","filter":{"regions":["Western Region","Southern Region"]},"metrics":["salesActual","salesTarget","salesAch"],"sortBy":"salesActual","sortDir":"desc"},{"id":"p2","chartType":"table","title":"Detail","groupBy":"region","filter":{"regions":["Western Region","Southern Region"]},"metrics":["salesActual","salesTarget","salesAch","mktMG","partsActual"],"sortBy":"salesActual","sortDir":"desc"}]}}]
+
+User: "Compare top 15 dealers by DOTY points"
+actions: [{"type":"visualize","spec":{"title":"Top 15 Dealers — DOTY Points","panels":[{"id":"p1","chartType":"bar","title":"DOTY Breakdown","groupBy":"dealer","filter":{},"metrics":["dotyTotal","dotySales","dotyAftersales"],"sortBy":"dotyTotal","sortDir":"desc","limit":15},{"id":"p2","chartType":"table","title":"DOTY Detail","groupBy":"dealer","filter":{},"metrics":["dotyTotal","dotySales","dotyAftersales","dotyGoogle","dotyCi"],"sortBy":"dotyTotal","sortDir":"desc","limit":15}]}}]
+
+User: "Market share by region as pie chart"
+actions: [{"type":"visualize","spec":{"title":"Market Share by Region","panels":[{"id":"p1","chartType":"pie","title":"MG Market Share","groupBy":"region","filter":{},"metrics":["mktMG"],"sortBy":"mktMG","sortDir":"desc"},{"id":"p2","chartType":"table","title":"Market Detail","groupBy":"region","filter":{},"metrics":["mktMG","mktTotal","mktShare"],"sortBy":"mktMG","sortDir":"desc"}]}}]
+
+- EMAIL: If the user says to send / email / share the dashboard to someone, extract their email address. You MUST also identify the format they want: "link" (just the dashboard URL) or "pdf" (a 5-tab PDF screenshot of each dashboard tab). If the user has NOT mentioned which format they want, ask them in your "reply" before emitting the sendEmail action — do NOT emit sendEmail until you know both the recipient AND the format. Once both are known, add a sendEmail action with "to", "toName" (if mentioned), and "format" set to "link" or "pdf". For PDF: if the user says they want the PDF filtered to a specific region (e.g. "Eastern Region PDF"), also set "captureRegion". If they mention a specific PMA, set "capturePma". If a specific dealer, set "captureDealer". Leave these empty if the user wants all data.`;
+
+        // Build Gemini contents array.
+        // systemInstruction is only supported on v1beta; instead we prepend it
+        // as the first user/model exchange so it works on the stable v1 endpoint.
+        const contents = [
+            { role: 'user', parts: [{ text: systemInstruction }] },
+            { role: 'model', parts: [{ text: 'Understood. I am ready to answer questions about the MG dealer network using the data provided.' }] },
+        ];
+
+        // Inject conversation history (alternating user/model turns)
+        if (history && history.length) {
+            history.forEach(msg => {
+                contents.push({
+                    role: msg.role === 'user' ? 'user' : 'model',
+                    parts: [{ text: msg.text }]
+                });
+            });
+        }
+
+        // Add the current question
+        contents.push({ role: 'user', parts: [{ text: question }] });
+
+        const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents,
+                    generationConfig: {
+                        temperature: 0.2,
+                        maxOutputTokens: 4096,
+                    }
+                })
+            }
+        );
+
+        if (!geminiRes.ok) {
+            const errText = await geminiRes.text();
+            throw new Error(`Gemini API error ${geminiRes.status}: ${errText}`);
+        }
+
+        const geminiData = await geminiRes.json();
+        const candidate = geminiData.candidates?.[0];
+        const finishReason = candidate?.finishReason || candidate?.finish_reason || '';
+        const rawText = candidate?.content?.parts?.[0]?.text || '{}';
+
+        if (finishReason === 'MAX_TOKENS') {
+            return res.status(200).json({
+                reply: 'The response was too long to complete. Try asking about a specific region or dealer instead of the full network.',
+                actions: []
+            });
+        }
+
+        let parsed;
+        try {
+            const stripped = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            parsed = JSON.parse(stripped);
+        } catch (_) {
+            parsed = { reply: rawText, actions: [] };
+        }
+
+        return res.status(200).json({
+            reply: parsed.reply || 'I could not generate a response.',
+            actions: parsed.actions || []
+        });
+
+    } catch (err) {
+        console.error('POST /ask error:', err);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// Build a compact, token-efficient summary of all dealer data for the AI.
+// The frontend sends the already-flattened masterList objects (d.name, d.salesActual, etc.)
+// so we normalise both shapes here.
+function buildDataSummary(dealers) {
+    const total = dealers.length;
+
+    // Normalise: handle both raw store shape {dealer:{name}, monthly:[...]}
+    // and the flattened frontend shape {name, region, salesActual, ...}
+    const norm = dealers.map(d => {
+        if (d.dealer) {
+            const m = d.monthly?.[0] || {};
+            return {
+                name: d.dealer.name,
+                region: d.dealer.region,
+                pma: d.dealer.pma,
+                salesActual: m.sales?.actual || 0,
+                salesTarget: m.sales?.target || 0,
+                mktMG: m.market?.mg || 0,
+                mktTotal: m.market?.total || 0,
+                partsActual: m.parts?.actual || 0,
+                partsTarget: m.parts?.target || 0,
+                googleScore: m.google?.score || 0,
+                googleResp: m.google?.responses || 0,
+                dotyTotal: m.doty?.total || 0,
+                ciStatus: m.ci?.status || 'No',
+                cxR: m.service?.response || 'N',
+                cxS: m.service?.score || 'N',
+                cxL: m.service?.leadTime || 'N',
+                cxT: m.service?.training || 'N',
+            };
+        }
+        // Flattened frontend shape
+        return {
+            name: d.name || '',
+            region: d.region || '',
+            pma: d.pma || '',
+            salesActual: d.salesActual || 0,
+            salesTarget: d.salesTarget || 0,
+            mktMG: d.mktMG || 0,
+            mktTotal: d.mktTotal || 0,
+            partsActual: d.partsActual || 0,
+            partsTarget: d.partsTarget || 0,
+            googleScore: d.googleScore || 0,
+            googleResp: d.googleResp || 0,
+            dotyTotal: d.dotyTotal || 0,
+            ciStatus: d.ciStatus || 'No',
+            cxR: d.cxResponse ? 'Y' : 'N',
+            cxS: d.cxScore ? 'Y' : 'N',
+            cxL: d.cxLeadTime ? 'Y' : 'N',
+            cxT: d.cxTraining ? 'Y' : 'N',
+        };
+    });
+
+    const rows = norm.map(d => [
+        d.name,
+        d.region,
+        d.pma,
+        `sales:${d.salesActual}/${d.salesTarget}`,
+        `mkt:${d.mktMG}/${d.mktTotal}`,
+        `parts:$${Math.round(d.partsActual / 1000)}k/$${Math.round(d.partsTarget / 1000)}k`,
+        `google:${d.googleScore}(${d.googleResp}rev)`,
+        `doty:${d.dotyTotal}pts`,
+        `ci:${d.ciStatus}`,
+        `cx:R${d.cxR}/S${d.cxS}/L${d.cxL}/T${d.cxT}`,
+    ].join(' | '));
+
+    const regions = {};
+    norm.forEach(d => {
+        const r = d.region || 'Unknown';
+        if (!regions[r]) regions[r] = { count: 0, salesA: 0, salesT: 0, partsA: 0, dotyTop: null };
+        regions[r].count++;
+        regions[r].salesA += d.salesActual;
+        regions[r].salesT += d.salesTarget;
+        regions[r].partsA += d.partsActual;
+        if (!regions[r].dotyTop || d.dotyTotal > regions[r].dotyTop.score) {
+            regions[r].dotyTop = { name: d.name, score: d.dotyTotal };
+        }
+    });
+
+    const regionSummary = Object.entries(regions).map(([r, v]) =>
+        `  ${r}: ${v.count} dealers | sales ${v.salesA}/${v.salesT} (${v.salesT ? Math.round(v.salesA / v.salesT * 100) : 0}% ach) | parts $${Math.round(v.partsA / 1000)}k | top DOTY: ${v.dotyTop?.name} (${v.dotyTop?.score}pts)`
+    ).join('\n');
+
+    const dataMonth = dealers[0]?.monthly?.[0]?.month || dealers[0]?.month || 'Latest';
+
+    const rank = (arr, key, n = 10) => [...arr].sort((a, b) => (b[key] || 0) - (a[key] || 0)).slice(0, n);
+
+    const top10Doty = rank(norm, 'dotyTotal')
+        .map((d, i) => `  ${i + 1}. ${d.name} — ${d.dotyTotal}pts`).join('\n');
+
+    const top10Sales = rank(norm, 'salesActual')
+        .map((d, i) => `  ${i + 1}. ${d.name} — ${d.salesActual} units (target ${d.salesTarget})`).join('\n');
+
+    const top10SalesAch = [...norm]
+        .filter(d => d.salesTarget > 0)
+        .sort((a, b) => b.salesActual / b.salesTarget - a.salesActual / a.salesTarget)
+        .slice(0, 10)
+        .map((d, i) => `  ${i + 1}. ${d.name} — ${Math.round(d.salesActual / d.salesTarget * 100)}% (${d.salesActual}/${d.salesTarget})`).join('\n');
+
+    const top10Parts = rank(norm, 'partsActual')
+        .map((d, i) => `  ${i + 1}. ${d.name} — $${Math.round(d.partsActual / 1000)}k`).join('\n');
+
+    const top10Google = [...norm].filter(d => d.googleScore > 0)
+        .sort((a, b) => b.googleScore - a.googleScore).slice(0, 10)
+        .map((d, i) => `  ${i + 1}. ${d.name} — ${d.googleScore} ★`).join('\n');
+
+    return `DATA MONTH: ${dataMonth}
+TOTAL DEALERS: ${total}
+
+TAB RANKING RULES — always use the matching ranking when user asks "top performers" or "rankings":
+- DOTY Leaderboard tab → rank by dotyTotal
+- Sales & Market tab → rank by salesActual or salesAch %
+- Aftersales & CX tab → rank by partsActual
+- Network & Google tab → rank by googleScore
+- Executive Overview → rank by salesActual
+
+REGIONAL AGGREGATES:
+${regionSummary}
+
+TOP 10 DOTY LEADERBOARD (matches DOTY Leaderboard tab exactly):
+${top10Doty}
+
+TOP 10 BY SALES ACTUAL (matches Sales tab):
+${top10Sales}
+
+TOP 10 BY SALES ACHIEVEMENT % (matches Sales tab):
+${top10SalesAch}
+
+TOP 10 BY PARTS REVENUE (matches Aftersales tab):
+${top10Parts}
+
+TOP 10 BY GOOGLE RATING (matches Network & Google tab):
+${top10Google}
+
+ALL DEALERS (name | region | pma | sales actual/target | mkt mg/total | parts $actual/$target | google score(reviews) | doty pts | ci status | cx R/S/L/T):
+${rows.join('\n')}`;
+}
+
+// POST /sarvam-tts — proxy Sarvam TTS (browser can't send custom auth headers via WebSocket)
+app.post('/sarvam-tts', async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: "text required" });
+
+  try {
+    const response = await fetch("https://api.sarvam.ai/text-to-speech", {
+      method: "POST",
+      headers: {
+        "api-subscription-key": "sk_8921n9v1_99j8aAfdt5dyr62Wc2lvS0Qv",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        target_language_code: "en-IN",
+        speaker:              "anushka",
+        model:                "bulbul:v2",
+        text,
+        speech_sample_rate:   24000,
+        output_audio_codec:   "linear16",
+        enable_preprocessing: false,
+        pitch:                0,
+        pace:                 1.0,
+        loudness:             1.5,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) return res.status(response.status).json({ error: data });
+
+    // Sarvam returns { audios: ["<base64>", ...] }
+    const audio = data.audios?.[0] ?? data.audio_content ?? data.audio ?? null;
+    if (!audio) return res.status(500).json({ error: "no audio in Sarvam response", raw: data });
+
+    res.json({ audio });
+  } catch (err) {
+    console.error("POST /sarvam-tts error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ──────────────────────────────────────────────
+// GET  /pinned-viz?id=SCORECARD_01  — load pinned viz spec
+// POST /pinned-viz  { id, spec }    — save pinned viz spec
+// DELETE /pinned-viz?id=SCORECARD_01 — remove pinned viz
+// ──────────────────────────────────────────────
+app.get('/pinned-viz', async (req, res) => {
+    try {
+        const id = req.query?.id;
+        if (!id) return res.status(400).json({ error: 'Missing id' });
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const key = `${id}_pinned_viz`;
+        const result = await zcql.executeZCQLQuery('SELECT record_id, data FROM dashboard_data');
+        if (!result?.length) return res.json({ spec: null });
+        const match = result.find(r => {
+            const row = r.dashboard_data || r.DASHBOARD_DATA || Object.values(r)[0];
+            return row?.record_id === key;
+        });
+        if (!match) return res.json({ spec: null });
+        const row = match.dashboard_data || match.DASHBOARD_DATA || Object.values(match)[0];
+        return res.json({ spec: JSON.parse(row.data) });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/pinned-viz', async (req, res) => {
+    try {
+        const { id, spec } = req.body;
+        if (!id || !spec) return res.status(400).json({ error: 'Missing id or spec' });
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const key = `${id}_pinned_viz`;
+        const esc = JSON.stringify(spec).replace(/'/g, "''");
+        try { await zcql.executeZCQLQuery(`DELETE FROM dashboard_data WHERE record_id = '${key}'`); } catch (_) {}
+        await zcql.executeZCQLQuery(`INSERT INTO dashboard_data (record_id, data) VALUES ('${key}', '${esc}')`);
+        return res.json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/pinned-viz', async (req, res) => {
+    try {
+        const id = req.query?.id;
+        if (!id) return res.status(400).json({ error: 'Missing id' });
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const key = `${id}_pinned_viz`;
+        await zcql.executeZCQLQuery(`DELETE FROM dashboard_data WHERE record_id = '${key}'`);
+        return res.json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+module.exports = app;
