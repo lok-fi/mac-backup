@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>XYZ Wellness – AI Call Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://live.zwidgets.com/js-sdk/1.0/ZohoEmbededAppSDK.min.js"></script>
+
+<script>
+ZOHO.embeddedApp.on("PageLoad", function(data) {
+
+    // Get screen width
+    var screenWidth = window.innerWidth;
+
+    // Calculate 70%
+    var widgetWidth = Math.floor(screenWidth * 0.7);
+
+    // Set height (you can adjust)
+    var widgetHeight = 600;
+
+    // Resize widget
+    ZOHO.CRM.UI.Resize({
+        width: widgetWidth,
+        height: widgetHeight
+    });
+
+});
+
+ZOHO.embeddedApp.init();
+</script>
+<style>
+
+  
+  :root {
+    --sage:        #5a8a6e;
+    --sage-light:  #e8f2ec;
+    --sage-mid:    #c4dccb;
+    --saffron:     #e07b39;
+    --saffron-light: #fdf0e8;
+    --teal:        #2d7d8a;
+    --teal-light:  #e4f3f5;
+    --rose:        #c46b7a;
+    --rose-light:  #fceef0;
+    --gold:        #c99a3e;
+    --gold-light:  #fdf6e3;
+    --cream:       #faf8f4;
+    --ink:         #1e2a22;
+    --ink-soft:    #4a5c51;
+    --border:      #e2e8e4;
+    --white:       #ffffff;
+    --radius-sm:   8px;
+    --radius-md:   14px;
+    --radius-lg:   20px;
+    --shadow-xs:   0 1px 4px rgba(30,42,34,.06);
+    --shadow-sm:   0 2px 10px rgba(30,42,34,.08);
+    --shadow-md:   0 4px 20px rgba(30,42,34,.11);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── TOP BANNER ── */
+  .banner {
+    background: linear-gradient(135deg, #2d7d8a 0%, #3d9e6a 60%, #5a8a6e 100%);
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .banner-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    border: 2px solid rgba(255,255,255,.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .banner h1 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .banner-sub {
+    color: rgba(255,255,255,.78);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+  .banner-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .badge.call { background: rgba(224,123,57,.35); border-color: rgba(224,123,57,.5); }
+
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    padding: 24px 24px 40px;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── AUDIO PLAYER ── */
+  .audio-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-xs);
+    flex-wrap: wrap;
+  }
+  .play-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(45,125,138,.3);
+    transition: transform .15s;
+  }
+  .play-btn:hover { transform: scale(1.07); }
+  .play-btn svg { width: 16px; height: 16px; fill: #fff; margin-left: 2px; }
+  .audio-info { flex: 1; min-width: 160px; }
+  .audio-title { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+  .audio-meta { font-size: 11.5px; color: var(--ink-soft); margin-top: 3px; }
+  .waveform {
+    flex: 2; min-width: 120px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .waveform span {
+    display: block;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--sage-mid);
+    transition: background .2s;
+  }
+  .waveform span.active { background: var(--teal); }
+  .audio-dur { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .section-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--sage);
+    flex-shrink: 0;
+  }
+
+  /* ── PAIR SCORE CARDS ── */
+  .pair-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  @media(max-width:640px){ .pair-grid { grid-template-columns: repeat(2,1fr); } }
+  .pair-card {
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pair-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .pair-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    opacity: .12;
+    background: currentColor;
+  }
+  .pair-card.empathy  { background: var(--gold-light);  border-color: #e8d4a0; color: var(--gold); }
+  .pair-card.care     { background: var(--sage-light);  border-color: var(--sage-mid); color: var(--sage); }
+  .pair-card.knowledge{ background: var(--teal-light);  border-color: #a8d8de; color: var(--teal); }
+  .pair-card.compliance{ background: var(--rose-light); border-color: #e8bcc4; color: var(--rose); }
+  .pair-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); letter-spacing: .4px; text-transform: uppercase; }
+  .pair-score { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .pair-score span { font-size: 14px; font-weight: 400; color: var(--ink-soft); }
+  .pair-desc { font-size: 11px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+
+  /* ── AI SUMMARY BOX ── */
+  .summary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-header {
+    background: linear-gradient(90deg, rgba(90,138,110,.08) 0%, rgba(45,125,138,.06) 100%);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sparkle { font-size: 18px; }
+  .summary-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .summary-header h2 span { color: var(--teal); }
+  .summary-body { padding: 18px 20px; }
+  .summary-point {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f4f1;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .summary-point:last-child { border-bottom: none; }
+  .summary-point::before {
+    content: '✦';
+    color: var(--sage);
+    flex-shrink: 0;
+    font-size: 10px;
+    margin-top: 5px;
+  }
+  .next-steps {
+    background: linear-gradient(135deg, var(--teal-light) 0%, var(--sage-light) 100%);
+    border: 1px solid var(--sage-mid);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .next-steps strong { color: var(--teal); font-size: 12px; letter-spacing: .4px; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .summary-ts { text-align: right; font-size: 11px; color: #a0afa8; padding: 10px 20px 14px; border-top: 1px solid #f2f5f3; }
+
+  /* ── AI SUGGESTIONS ── */
+  .suggestions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media(max-width:540px){ .suggestions-grid { grid-template-columns: 1fr; } }
+  .sugg-card {
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+  }
+  .sugg-card.improve {
+    background: #fff8f2;
+    border: 1.5px solid #f2d5b8;
+  }
+  .sugg-card.working {
+    background: #f2faf5;
+    border: 1.5px solid var(--sage-mid);
+  }
+  .sugg-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sugg-card.improve .sugg-title { color: var(--saffron); }
+  .sugg-card.working .sugg-title { color: var(--sage); }
+  .sugg-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .sugg-item:last-child { margin-bottom: 0; }
+  .sugg-item::before { content: '•'; font-size: 16px; line-height: 1.2; flex-shrink: 0; }
+  .sugg-card.improve .sugg-item::before { color: var(--saffron); }
+  .sugg-card.working .sugg-item::before { color: var(--sage); }
+
+  /* ── QUALITY SCORE CARDS ── */
+  .quality-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media(max-width:640px){ .quality-grid { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:420px){ .quality-grid { grid-template-columns: 1fr; } }
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: box-shadow .2s;
+  }
+  .q-card:hover { box-shadow: var(--shadow-md); }
+  .q-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .q-label {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .q-sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
+  .q-score-pill {
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .q-score-pill.green  { background: var(--sage-light);  color: var(--sage); }
+  .q-score-pill.teal   { background: var(--teal-light);  color: var(--teal); }
+  .q-score-pill.gold   { background: var(--gold-light);  color: var(--gold); }
+  .q-score-pill.rose   { background: var(--rose-light);  color: var(--rose); }
+  .q-score-pill.na     { background: #f0f0f0; color: #888; }
+  .q-evidence-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: #aab5ae;
+    margin-bottom: 4px;
+  }
+  .q-evidence {
+    background: #f7faf8;
+    border-left: 3px solid var(--sage-mid);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .q-reason-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: #aab5ae;
+    margin-bottom: 4px;
+  }
+  .q-reason {
+    background: #f3f7f9;
+    border-left: 3px solid #a8d8de;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ── SCORE BAR ── */
+  .score-bar-wrap { margin-top: 2px; }
+  .score-bar-track {
+    height: 5px;
+    background: #eef2ee;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--sage) 0%, var(--teal) 100%);
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+    margin: 4px 0;
+  }
+
+  /* ── TRANSCRIPT ── */
+  .transcript-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .transcript-header {
+    background: linear-gradient(90deg, rgba(30,42,34,.04) 0%, rgba(45,125,138,.04) 100%);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .transcript-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .transcript-icon { font-size: 18px; }
+  .transcript-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .transcript-header h2 span { color: var(--teal); }
+  .transcript-meta {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .transcript-toggle {
+    background: var(--sage-light);
+    border: 1px solid var(--sage-mid);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .transcript-toggle:hover { background: var(--sage-mid); }
+  .transcript-toggle svg { transition: transform .25s; }
+  .transcript-toggle.collapsed svg { transform: rotate(-90deg); }
+  .transcript-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 520px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+  .transcript-body::-webkit-scrollbar { width: 5px; }
+  .transcript-body::-webkit-scrollbar-track { background: #f0f4f1; border-radius: 10px; }
+  .transcript-body::-webkit-scrollbar-thumb { background: var(--sage-mid); border-radius: 10px; }
+  .transcript-body.hidden { display: none; }
+  .tx-line {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tx-line.client { flex-direction: row-reverse; }
+  .tx-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .agent-av { background: var(--teal-light); color: var(--teal); }
+  .client-av { background: var(--gold-light); color: var(--gold); }
+  .tx-bubble {
+    max-width: 72%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tx-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tx-line.client .tx-name { flex-direction: row-reverse; }
+  .tx-time {
+    font-size: 10px;
+    font-weight: 400;
+    color: #b0bdb6;
+    font-variant-numeric: tabular-nums;
+  }
+  .tx-text {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .tx-line.agent .tx-text {
+    background: var(--sage-light);
+    border: 1px solid var(--sage-mid);
+    border-top-left-radius: 4px;
+  }
+  .tx-line.client .tx-text {
+    background: var(--gold-light);
+    border: 1px solid #e8d4a0;
+    border-top-right-radius: 4px;
+    text-align: right;
+  }
+
+  /* ── FOOTER TIMESTAMP ── */
+  .foot-ts {
+    text-align: center;
+    font-size: 11.5px;
+    color: #b0bdb6;
+    padding-top: 8px;
+  }
+  .foot-ts span { color: var(--sage); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- BANNER -->
+<div class="banner">
+  <div class="banner-left">
+    <div class="avatar">🧘</div>
+    <div>
+      <h1>Priya Sharma</h1>
+      <div class="banner-sub">+91 98765 43210 &nbsp;·&nbsp; Member since Jan 2025 &nbsp;·&nbsp; Wellness Consultation</div>
+    </div>
+  </div>
+  <div class="banner-right">
+    <span class="badge">New Lead</span>
+    <span class="badge call">📞 Inbound Call</span>
+  </div>
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- AUDIO PLAYER -->
+  <div class="audio-card">
+    <button class="play-btn">
+      <svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z"/></svg>
+    </button>
+    <div class="audio-info">
+      <div class="audio-title">CALL · 21 Mar 2026</div>
+      <div class="audio-meta">09:14 AM &nbsp;·&nbsp; Duration: 7m 42s &nbsp;·&nbsp; Agent: Sumedha K.</div>
+    </div>
+    <div class="waveform" id="waveform"></div>
+    <div class="audio-dur">07:42</div>
+  </div>
+
+  <!-- PAIR SCORES -->
+  <div>
+    <div class="section-title"><span class="dot"></span>Client Intelligence Scores</div>
+    <div class="pair-grid">
+      <div class="pair-card empathy">
+        <div class="pair-label">Empathy</div>
+        <div class="pair-score">3<span>/5</span></div>
+        <div class="pair-desc">Client expressed mild hesitation about pricing</div>
+      </div>
+      <div class="pair-card care">
+        <div class="pair-label">Openness</div>
+        <div class="pair-score">4<span>/5</span></div>
+        <div class="pair-desc">Showed genuine interest in holistic wellness plan</div>
+      </div>
+      <div class="pair-card knowledge">
+        <div class="pair-label">Intent</div>
+        <div class="pair-score">4<span>/5</span></div>
+        <div class="pair-desc">Seeking long-term program, not a one-time session</div>
+      </div>
+      <div class="pair-card compliance">
+        <div class="pair-label">Readiness</div>
+        <div class="pair-score">5<span>/5</span></div>
+        <div class="pair-desc">Ready to book a trial consultation this week</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI SUGGESTIONS -->
+  <div>
+    <div class="section-title"><span class="dot"></span>AI Coaching Suggestions</div>
+    <div class="suggestions-grid">
+      <div class="sugg-card improve">
+        <div class="sugg-title">⚠ Needs Improvement</div>
+        <div class="sugg-item">Address pricing concerns with flexible package options early</div>
+        <div class="sugg-item">Probe deeper on specific wellness goals (stress, weight, sleep)</div>
+        <div class="sugg-item">Mention success stories or testimonials to build trust</div>
+      </div>
+      <div class="sugg-card working">
+        <div class="sugg-title">✓ What's Working Well</div>
+        <div class="sugg-item">Warm and calming tone throughout the call</div>
+        <div class="sugg-item">Listened actively and repeated client's health concerns back</div>
+        <div class="sugg-item">Effectively highlighted the detox and yoga packages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUALITY SCORE CARDS -->
+  <div>
+    <div class="section-title"><span class="dot"></span>Call Quality Breakdown</div>
+    <div class="quality-grid">
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Tone & Warmth</div><div class="q-sub">Excellent</div></div>
+          <span class="q-score-pill green">5/5</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Evidence</div>
+          <div class="q-evidence">"जी, मैं सुमेधा बोल रही हूँ, XYZ Wellness से। आप कैसे हैं, मैडम?"</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">Agent maintained a calm, empathetic tone throughout, using respectful language appropriate for a wellness context.</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Greeting</div><div class="q-sub">Excellent</div></div>
+          <span class="q-score-pill green">5/5</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Evidence</div>
+          <div class="q-evidence">"हेलो! नमस्ते मैडम। XYZ Wellness में आपका स्वागत है।"</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">The agent introduced herself, named the center, and used a warm bilingual greeting personalised to the caller.</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Product Knowledge</div><div class="q-sub">Excellent</div></div>
+          <span class="q-score-pill teal">5/5</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Evidence</div>
+          <div class="q-evidence">"हमारा 3-month wellness plan में detox, yoga और nutrition coaching included है…"</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">Agent accurately described package inclusions, pricing tiers, and weekend batch availability without hesitation.</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Active Listening</div><div class="q-sub">Excellent</div></div>
+          <span class="q-score-pill teal">5/5</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Evidence</div>
+          <div class="q-evidence">"आपने बताया कि आपको back pain और sleep issues हैं — हमारे पास specifically उसके लिए…"</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">Agent paraphrased client concerns accurately and responded with targeted program recommendations.</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Care & Empathy</div><div class="q-sub">Excellent</div></div>
+          <span class="q-score-pill green">5/5</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Evidence</div>
+          <div class="q-evidence">"कोई tension नहीं, मैडम। आप पहले free trial लें, फिर decide करें।"</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">Agent proactively offered a free trial to ease pricing hesitation, showing genuine concern for client comfort.</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-card-header">
+          <div><div class="q-label">Problem Solving</div><div class="q-sub">N/A</div></div>
+          <span class="q-score-pill na">N/A</span>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div>
+          <div class="q-evidence-label">Note</div>
+          <div class="q-evidence">Client did not raise any objections during this call. Score not applicable.</div>
+        </div>
+        <div>
+          <div class="q-reason-label">Reasoning</div>
+          <div class="q-reason">No escalation or complaint scenario was triggered. Score will be evaluated in follow-up calls.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AI SUMMARY -->
+  <div class="summary-card">
+    <div class="summary-header">
+      <span class="sparkle">✦</span>
+      <h2>AI <span>Generated Summary</span></h2>
+    </div>
+    <div class="summary-body">
+      <div class="summary-point">The client, Priya Sharma, is interested in a holistic wellness program covering stress management, detox, and yoga. She has a monthly budget of ₹8,000–₹10,000 and prefers weekend sessions.</div>
+      <div class="summary-point">Priya is a working professional with a hectic schedule and mentioned back pain and sleep issues as primary concerns. She is not currently on any prescribed medication.</div>
+      <div class="summary-point">She is open to a 3-month starter package and would like to bring her husband along for a complimentary trial. She confirmed availability this Saturday at 11 AM for an in-center consultation.</div>
+      <div class="next-steps">
+        <strong>✦ Recommended Next Steps</strong>
+        Confirm Saturday 11 AM slot for Priya and her husband. Share the Starter Wellness Package brochure via WhatsApp. Follow up on Monday morning with a reminder call. Check if weekend batch has capacity for two members.
+      </div>
+    </div>
+    <div class="summary-ts">Last updated: 21 Mar 2026, 09:58 AM</div>
+  </div>
+
+  <!-- TRANSCRIPT -->
+  <div class="transcript-card">
+    <div class="transcript-header">
+      <div class="transcript-header-left">
+        <span class="transcript-icon">🗒</span>
+        <div>
+          <h2>Call <span>Transcript</span></h2>
+          <div class="transcript-meta">21 Mar 2026 &nbsp;·&nbsp; 09:14 AM &nbsp;·&nbsp; 7m 42s &nbsp;·&nbsp; Auto-generated</div>
+        </div>
+      </div>
+      <button class="transcript-toggle" onclick="toggleTranscript(this)">
+        <span>Hide</span> <svg viewBox="0 0 10 6" width="10"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="transcript-body" id="transcriptBody">
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">00:00</span></div>
+          <div class="tx-text">हेलो! नमस्ते मैडम। XYZ Wellness में आपका स्वागत है। मैं सुमेधा बोल रही हूँ। आप कैसे हैं आज?</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">00:08</span></div>
+          <div class="tx-text">हाँ जी, ठीक हूँ। मैंने आपका ad देखा था — wellness packages के बारे में। थोड़ा जानना था।</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">00:18</span></div>
+          <div class="tx-text">बिल्कुल मैडम! हमारे पास कई options हैं। आप किस चीज़ के लिए mainly देख रही हैं — stress management, weight loss, detox, या कुछ और?</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">00:31</span></div>
+          <div class="tx-text">Actually मुझे काफी time से back pain है और नींद भी ठीक से नहीं आती। Office का काम बहुत ज़्यादा है। तो overall relaxation चाहिए था।</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">00:48</span></div>
+          <div class="tx-text">समझ सकती हूँ मैडम। आपने बताया कि आपको back pain और sleep issues हैं — हमारे पास specifically उसके लिए एक Therapeutic Yoga + Detox combo है। बहुत लोगों को इससे काफी फ़र्क पड़ा है।</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">01:10</span></div>
+          <div class="tx-text">अच्छा? इसमें क्या-क्या होता है? और cost कितनी है?</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">01:18</span></div>
+          <div class="tx-text">हमारा 3-month wellness plan में detox, yoga और nutrition coaching included है। Weekend batches available हैं। Cost ₹9,500 per month है, लेकिन 3 months लेने पर 10% discount मिलता है। और पहले एक free trial session भी है।</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">01:52</span></div>
+          <div class="tx-text">Hmm, थोड़ा budget में देखना होगा। मेरा budget around ₹8,000–10,000 per month है। और मैं चाहती थी कि मेरे husband भी साथ आ सकें एक बार।</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">02:10</span></div>
+          <div class="tx-text">कोई tension नहीं, मैडम। आप पहले free trial लें, फिर decide करें। और husband के लिए हम एक complimentary guest pass arrange कर सकते हैं trial visit पर।</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">02:30</span></div>
+          <div class="tx-text">Oh that's really nice! तो कब आ सकते हैं? इस Saturday को time मिलेगा?</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">02:40</span></div>
+          <div class="tx-text">हाँ मैडम! Saturday को 11 AM slot available है। मैं अभी book कर देती हूँ। आपका WhatsApp number confirm कर लूँ — center की location और details भेज दूँगी।</div>
+        </div>
+      </div>
+
+      <div class="tx-line client">
+        <div class="tx-bubble">
+          <div class="tx-name">Priya Sharma <span class="tx-time">02:58</span></div>
+          <div class="tx-text">हाँ, यही number है। ठीक है, Saturday 11 बजे। Thank you!</div>
+        </div>
+        <div class="tx-avatar client-av">P</div>
+      </div>
+
+      <div class="tx-line agent">
+        <div class="tx-avatar agent-av">S</div>
+        <div class="tx-bubble">
+          <div class="tx-name">Sumedha K. <span class="tx-time">03:08</span></div>
+          <div class="tx-text">Thank you mam! हम Saturday का wait करेंगे। कोई भी query हो तो call करियेगा। Take care and have a wellness-filled day! 🙏</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="foot-ts">Generated by <span>Atmantan Wellness AI</span> &nbsp;·&nbsp; Data is auto-refreshed after every call</div>
+
+</div>
+
+<script>
+  // Generate waveform bars
+  const wf = document.getElementById('waveform');
+  const heights = [14,18,22,28,24,30,28,20,16,24,30,28,24,18,14,20,26,30,22,18,14,20,28,30,24,16,12,18,22,28];
+  heights.forEach((h, i) => {
+    const bar = document.createElement('span');
+    bar.style.height = h + 'px';
+    if (i < 10) bar.classList.add('active');
+    wf.appendChild(bar);
+  });
+
+  // Animate score bars on load
+  document.querySelectorAll('.score-bar-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => { bar.style.width = w; }, 300);
+  });
+
+  // Transcript toggle
+  function toggleTranscript(btn) {
+    const body = document.getElementById('transcriptBody');
+    const isHidden = body.classList.toggle('hidden');
+    btn.querySelector('span').textContent = isHidden ? 'Show' : 'Hide';
+    btn.classList.toggle('collapsed', isHidden);
+  }
+
+
+
+</script>
+</body>
+</html>
+    <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("✅ DOM READY");
+
+    if (typeof ZOHO !== "undefined") {
+
+        console.log("✅ ZOHO AVAILABLE");
+
+        ZOHO.embeddedApp.on("PageLoad", async function (data) {
+
+            console.log("🔥 PAGE LOAD EVENT FIRED", data);
+
+            try {
+                const recordId = data.EntityId[0];
+
+                const response = await ZOHO.CRM.API.getRecord({
+                    Entity: "Contacts",
+                    RecordID: recordId
+                });
+
+                const record = response.data[0];
+
+                console.log("📦 CRM RECORD:", record);
+
+                const callUrl = record.call_url;
+
+                console.log("🎧 AUDIO URL:", callUrl);
+
+                loadSummary(callUrl);
+
+            } catch (err) {
+                console.error("❌ CRM ERROR:", err);
+            }
+        });
+
+        ZOHO.embeddedApp.init();
+
+    } else {
+        console.log("⚠️ ZOHO NOT FOUND (LOCAL MODE)");
+
+        loadSummary("https://thisisfiles-development.zohostratus.in/software_update_conversation.mp3");
+    }
+
+});
+
+</script>

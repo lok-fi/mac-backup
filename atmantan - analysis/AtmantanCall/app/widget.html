@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Test</title>
+  <script src="https://live.zwidgets.com/js-sdk/1.0/ZohoEmbededAppSDK.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background: #f9fafb;
+      color: #1a1a1a;
+    }
+
+    #log {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 12.5px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .ok {
+      color: #16a34a;
+    }
+
+    .err {
+      color: #dc2626;
+    }
+
+    .info {
+      color: #2563eb;
+    }
+
+    .warn {
+      color: #d97706;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>🔍 Widget Download Diagnostic</h2>
+  <div id="log"></div>
+
+  <script>
+
+    // ─── LOGGER ───
+    function log(msg, type) {
+      var el = document.getElementById("log");
+      var cls = type || "info";
+      var time = new Date().toLocaleTimeString();
+      el.innerHTML += '<span class="' + cls + '">[' + time + '] ' + msg + '</span>\n';
+      el.scrollTop = el.scrollHeight;
+      console.log("[" + cls.toUpperCase() + "]", msg);
+    }
+
+    // ─── STEP 0: Script loaded ───
+    log("✅ Script loaded — starting widget init", "ok");
+
+    try {
+
+      // ─── STEP 1: Check ZOHO object ───
+      if (typeof ZOHO === "undefined") {
+        log("❌ ZOHO object is UNDEFINED — SDK not loaded!", "err");
+      } else {
+        log("✅ ZOHO object exists", "ok");
+      }
+
+      // ─── STEP 2: Register PageLoad ───
+      log("📌 Registering PageLoad handler...", "info");
+
+      ZOHO.embeddedApp.on("PageLoad", async function (data) {
+
+        log("🔥 PageLoad FIRED!", "ok");
+        log("📦 PageLoad data: " + JSON.stringify(data), "info");
+
+        // ─── STEP 3: Extract record ID ───
+        var recordId = data.EntityId;
+        log("🆔 Raw EntityId: " + JSON.stringify(recordId), "info");
+
+        if (Array.isArray(recordId)) {
+          recordId = recordId[0];
+          log("🆔 EntityId was array, using first: " + recordId, "warn");
+        }
+
+        var entity = data.Entity || "Contacts";
+        log("📋 Entity: " + entity + " | RecordID: " + recordId, "info");
+
+        if (!recordId) {
+          log("❌ No RecordID found in PageLoad data!", "err");
+          return;
+        }
+
+        // ─── STEP 4: Fetch CRM record ───
+        log("📡 Fetching CRM record...", "info");
+
+        try {
+          var resp = await ZOHO.CRM.API.getRecord({
+            Entity: "Contacts",
+            RecordID: recordId
+          });
+
+          log("✅ CRM API responded", "ok");
+          log("📦 Response keys: " + Object.keys(resp), "info");
+
+          if (!resp.data || !resp.data[0]) {
+            log("❌ No data in response: " + JSON.stringify(resp), "err");
+            return;
+          }
+
+          var record = resp.data[0];
+          log("✅ Record fetched: " + (record.Full_Name || record.Last_Name || "unknown"), "ok");
+
+          // ─── STEP 5: Get call_url field ───
+          var audioUrl = record["call_url"];
+          log("🎧 call_url value: " + (audioUrl || "EMPTY / NULL"), audioUrl ? "ok" : "err");
+
+          if (!audioUrl) {
+            log("❌ call_url field is empty. Available fields with values:", "err");
+            // Show all fields that have values (to help find the right field name)
+            var fieldNames = Object.keys(record);
+            var fieldsWithValues = fieldNames.filter(function (k) {
+              var v = record[k];
+              return v !== null && v !== "" && typeof v !== "object";
+            });
+            log("📋 Fields with values: " + fieldsWithValues.join(", "), "warn");
+            return;
+          }
+
+          // ─── STEP 6: Test direct fetch ───
+          log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "info");
+          log("🧪 TEST A: Direct fetch()", "info");
+          log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "info");
+
+          try {
+            var fetchResp = await fetch(audioUrl);
+            log("📡 HTTP Status: " + fetchResp.status + " " + fetchResp.statusText, fetchResp.ok ? "ok" : "err");
+            log("📡 Content-Type: " + (fetchResp.headers.get("content-type") || "none"), "info");
+            log("📡 Content-Length: " + (fetchResp.headers.get("content-length") || "unknown"), "info");
+
+            if (fetchResp.ok) {
+              var buf = await fetchResp.arrayBuffer();
+              var sizeMB = (buf.byteLength / (1024 * 1024)).toFixed(2);
+              log("✅ DIRECT FETCH WORKED! File size: " + sizeMB + " MB (" + buf.byteLength + " bytes)", "ok");
+              log("🎉 Direct fetch is GOOD — no OAuth needed for download!", "ok");
+            } else {
+              log("❌ Direct fetch got HTTP " + fetchResp.status, "err");
+              // Try reading error body
+              try {
+                var errBody = await fetchResp.text();
+                log("📄 Error body (first 500 chars): " + errBody.substring(0, 500), "err");
+              } catch (e) { }
+            }
+          } catch (fetchErr) {
+            log("❌ Direct fetch FAILED: " + fetchErr.message, "err");
+            log("🔎 This usually means CORS block or network error", "warn");
+          }
+
+          // ─── STEP 7: Test ZOHO.CRM.HTTP.get ───
+          log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "info");
+          log("🧪 TEST B: ZOHO.CRM.HTTP.get()", "info");
+          log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "info");
+
+          try {
+            var httpResp = await ZOHO.CRM.HTTP.get({ url: audioUrl });
+            log("✅ ZOHO.CRM.HTTP responded", "ok");
+            log("📦 Response keys: " + Object.keys(httpResp), "info");
+            log("📡 Status code: " + (httpResp.status_code || "N/A"), "info");
+
+            if (httpResp.content) {
+              var contentLen = httpResp.content.length;
+              log("📏 Content length (string): " + contentLen + " chars", "ok");
+              log("📏 Approx size: " + (contentLen / (1024 * 1024)).toFixed(2) + " MB", "info");
+              log("📄 First 100 chars: " + httpResp.content.substring(0, 100), "info");
+              log("🎉 ZOHO.CRM.HTTP.get WORKED!", "ok");
+            } else {
+              log("⚠️ Response has no .content property", "warn");
+              log("📦 Full response: " + JSON.stringify(httpResp).substring(0, 500), "warn");
+            }
+          } catch (httpErr) {
+            log("❌ ZOHO.CRM.HTTP.get FAILED: " + httpErr.message, "err");
+          }
+
+          log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "info");
+          log("🏁 All tests complete — check results above", "info");
+
+        } catch (crmErr) {
+          log("❌ CRM API error: " + crmErr.message, "err");
+          log("📦 Full error: " + JSON.stringify(crmErr), "err");
+        }
+      });
+
+      // ─── STEP 8: Call init ───
+      log("📌 Calling ZOHO.embeddedApp.init()...", "info");
+      ZOHO.embeddedApp.init();
+      log("✅ init() called — waiting for PageLoad event...", "ok");
+
+    } catch (globalErr) {
+      log("❌ GLOBAL ERROR: " + globalErr.message, "err");
+      log("📦 Stack: " + globalErr.stack, "err");
+    }
+
+  </script>
+</body>
+
+</html>
