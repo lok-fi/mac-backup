@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-upl-blue: #002855;
+  --color-upl-orange: #ff8200;
+  --color-upl-green: #8cc63f;
+  --font-sans: "Noto Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply text-slate-900 bg-slate-50 antialiased;
+  }
+}
+
+@keyframes floatMolecule {
+  0%   { transform: translateY(0)      rotate(0deg);   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes ping-slow {
+  0%   { transform: scale(0.95); opacity: 0.4; }
+  70%  { transform: scale(1.05); opacity: 0; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Themed scrollbar — orange accent, matches UPL brand */
+.scroll-upl {
+  scrollbar-width: thin;
+  scrollbar-color: #ff8200 transparent;
+}
+.scroll-upl::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-upl::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 99px;
+}
+.scroll-upl::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #ff8200, #f59e0b);
+  border-radius: 99px;
+}
+.scroll-upl::-webkit-scrollbar-thumb:hover {
+  background: #e67300;
+}

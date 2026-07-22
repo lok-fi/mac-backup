@@ -340,7 +340,7 @@
 //         contents.push({ role: 'user', parts: [{ text: question }] });
 
 //         const geminiRes = await fetch(
-//             `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
+//             `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
 //             {
 //                 method: 'POST',
 //                 headers: { 'Content-Type': 'application/json' },
@@ -499,6 +499,11 @@ const cors       = require('cors');
 const XLSX       = require('xlsx');
 const nodemailer = require('nodemailer');
 
+// ── Environment configuration ──────────────────────────────────────────────
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL   = process.env.GEMINI_MODEL   || 'gemini-3-flash-preview';
+const BASE_URL       = process.env.BASE_URL        || '';
+
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -515,14 +520,38 @@ const CATALYST_ADMIN_ROLE_ID = '27414000000142433'; // "App Administrator"
 const catalystRole = (cu) =>
     cu?.role_details?.role_id === CATALYST_ADMIN_ROLE_ID ? 'admin' : 'dealer';
 
-// Middleware: verifies the caller holds the App Administrator Catalyst role
+// Middleware: verifies the caller is an admin.
+// Primary check: Catalyst App Administrator role_id on the user object.
+// Fallback: look up the email in the app's own users DataStore table.
+// The fallback handles local-dev quirks where getCurrentUser() returns
+// different role_details on POST vs GET requests.
 const requireCatalystAdmin = async (req, res, next) => {
     try {
         const catalystApp = catalyst.initialize(req);
         const cu = await catalystApp.userManagement().getCurrentUser();
-        if (catalystRole(cu) !== 'admin') return res.status(403).json({ error: 'Admin access required' });
-        req.currentUser = { email: cu.email_id, role: 'admin' };
-        next();
+
+        // Primary: Catalyst application role
+        if (catalystRole(cu) === 'admin') {
+            req.currentUser = { email: cu.email_id, role: 'admin' };
+            return next();
+        }
+
+        // Fallback: app users table
+        if (cu?.email_id) {
+            const zcql = catalystApp.zcql();
+            const safe = cu.email_id.replace(/'/g, "''");
+            const rows = await zcql.executeZCQLQuery(
+                `SELECT role FROM users WHERE email = '${safe}' LIMIT 1`
+            );
+            const row = (rows || [])[0];
+            const appRole = row?.users?.role || row?.USERS?.role;
+            if (appRole === 'admin') {
+                req.currentUser = { email: cu.email_id, role: 'admin' };
+                return next();
+            }
+        }
+
+        return res.status(403).json({ error: 'Admin access required' });
     } catch {
         return res.status(401).json({ error: 'Not authenticated' });
     }
@@ -628,7 +657,7 @@ app.delete('/delete-user', requireCatalystAdmin, async (req, res) => {
 app.post('/setup-admin', async (req, res) => {
     try {
         const { email, name, setupKey } = req.body;
-        const expectedKey = process.env.SETUP_KEY || 'mg-setup-2025';
+        const expectedKey = process.env.SETUP_KEY;
         if (setupKey !== expectedKey) return res.status(403).json({ error: 'Invalid setup key' });
         if (!email) return res.status(400).json({ error: 'email is required' });
 
@@ -670,65 +699,140 @@ const clean = (v) => {
     return String(v).trim();
 };
 
+// Normalise dealer name for fuzzy matching — strips legal suffixes, punctuation,
+// and redundant words so "ABC Motors Pty Ltd" matches "ABC Motors"
+const normalizeDealer = (name) => {
+    if (!name) return '';
+    return String(name)
+        .toLowerCase()
+        .replace(/\b(pty\.?\s*ltd\.?|pty|p\/l|ltd\.?|inc\.?|llc|plc|co\.?\s*ltd\.?|incorporated|limited|australia|group|holdings|automotive|dealership|dealer)\b/g, '')
+        .replace(/['''\-&,\./\\]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
 const hasValue = (v) =>
     v !== null && v !== undefined && v !== '#N/A' && v !== '' && v !== '0' && Number(v) !== 0;
 
-// Returns the col index of the latest month that has data (default behaviour)
-const findLatestMonthCol = (rows, step, startCol) => {
-    let lastDataCol = startCol;
-    for (let col = startCol; col < (rows[0] || []).length; col += step) {
-        const actualCol = col + 1;
-        const hasData = rows.slice(2).some(r => hasValue(r[actualCol]));
-        if (hasData) lastDataCol = col;
+// ── Date parsing ──────────────────────────────────────────────────────────────
+// Handles: native Date, "Jan-25", "Jan 25", "Jan 2025", "January 2025",
+//          "01/2025", "2025-01", and generic ISO strings.
+const parseCellDate = (v) => {
+    if (v instanceof Date) return v;
+    const s = String(v).trim();
+
+    // "Jan-25" / "Jan/25" / "Jan 25" — 3-letter month + 2-digit year
+    const mmmYY = s.match(/^([A-Za-z]{3})[-\/\s](\d{2})$/);
+    if (mmmYY) {
+        const mi = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(mmmYY[1].toLowerCase());
+        if (mi >= 0) return new Date(2000 + parseInt(mmmYY[2], 10), mi, 1);
+    }
+
+    // "Jan 2025" / "Jan-2025" / "January 2025" — full or short month + 4-digit year
+    const mmmYYYY = s.match(/^([A-Za-z]+)[-\/\s](\d{4})$/);
+    if (mmmYYYY) {
+        const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+        const mi = MONTHS.findIndex(m => m.startsWith(mmmYYYY[1].toLowerCase()));
+        if (mi >= 0) return new Date(parseInt(mmmYYYY[2], 10), mi, 1);
+    }
+
+    // "01/2025" or "1/2025" — MM/YYYY
+    const mmYYYY = s.match(/^(\d{1,2})\/(\d{4})$/);
+    if (mmYYYY) return new Date(parseInt(mmYYYY[2], 10), parseInt(mmYYYY[1], 10) - 1, 1);
+
+    // "2025-01" — YYYY-MM
+    const yyyyMM = s.match(/^(\d{4})-(\d{2})$/);
+    if (yyyyMM) return new Date(parseInt(yyyyMM[1], 10), parseInt(yyyyMM[2], 10) - 1, 1);
+
+    // Generic fallback (handles full ISO dates, etc.)
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+};
+
+// ── Sheet layout auto-detection ───────────────────────────────────────────────
+// Scans rows 0-2 for date-like values to detect: which row has month headers,
+// which columns they're in, the step between them, and where data rows begin.
+// This replaces hardcoded step/startCol assumptions, so any variation of the
+// scorecard file structure works without code changes.
+const detectLayout = (rows) => {
+    for (let hr = 0; hr <= Math.min(2, rows.length - 1); hr++) {
+        const row = rows[hr] || [];
+        const dateCols = [];
+        for (let col = 0; col < row.length; col++) {
+            const v = row[col];
+            if (!v) continue;
+            try {
+                const d = parseCellDate(v);
+                if (d && !isNaN(d.getTime())) dateCols.push(col);
+            } catch (_) {}
+        }
+        if (dateCols.length > 0) {
+            const step = dateCols.length >= 2 ? (dateCols[1] - dateCols[0]) : 2;
+            return { headerRow: hr, dateCols, step, dataStartRow: hr + 1 };
+        }
+    }
+    return { headerRow: 0, dateCols: [], step: 2, dataStartRow: 2 };
+};
+
+// Returns the col index of the latest month that has actual data in the sheet
+const findLatestMonthCol = (rows, _step, _startCol) => {
+    const { dateCols, dataStartRow } = detectLayout(rows);
+    if (dateCols.length === 0) return _startCol || 2;
+    let lastDataCol = dateCols[0];
+    for (const col of dateCols) {
+        if (rows.slice(dataStartRow).some(r => hasValue(r[col + 1]))) lastDataCol = col;
     }
     return lastDataCol;
 };
 
-// Returns the col index for a specific YYYY-MM target, or falls back to latest
-const findMonthCol = (rows, step, startCol, targetYM) => {
-    if (!targetYM) return findLatestMonthCol(rows, step, startCol);
-    for (let col = startCol; col < (rows[0] || []).length; col += step) {
-        const v = rows[0][col];
+// Returns the col index for a specific YYYY-MM target month, or falls back to latest
+const findMonthCol = (rows, _step, _startCol, targetYM) => {
+    const { dateCols, headerRow } = detectLayout(rows);
+    if (!targetYM) return findLatestMonthCol(rows, _step, _startCol);
+    for (const col of dateCols) {
+        const v = rows[headerRow][col];
         if (!v) continue;
         try {
             const d = parseCellDate(v);
             if (!d || isNaN(d.getTime())) continue;
             const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
             if (ym === targetYM) return col;
-        } catch (_) { }
+        } catch (_) {}
     }
-    // Target month not found — fall back to latest
-    return findLatestMonthCol(rows, step, startCol);
+    return findLatestMonthCol(rows, _step, _startCol);
 };
 
-// Get all available months from a sheet with data counts
-const parseCellDate = (v) => {
-    if (v instanceof Date) return v;
-    // Handle "Jan-25" / "Feb-25" style (Excel "mmm-yy" format with 2-digit year)
-    const mmmYY = String(v).match(/^([A-Za-z]{3})[-\/\s](\d{2})$/);
-    if (mmmYY) {
-        const mi = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(mmmYY[1].toLowerCase());
-        if (mi >= 0) return new Date(2000 + parseInt(mmmYY[2], 10), mi, 1);
-    }
-    return new Date(String(v));
-};
-
-const getAvailableMonths = (rows, step, startCol) => {
+// Returns all months found in a sheet with per-month dealer data counts
+const getAvailableMonths = (rows, _step, _startCol) => {
+    const { dateCols, headerRow, dataStartRow } = detectLayout(rows);
     const months = [];
-    for (let col = startCol; col < (rows[0] || []).length; col += step) {
-        const v = rows[0][col];
+    for (const col of dateCols) {
+        const v = rows[headerRow][col];
         if (!v) continue;
         try {
             const d = parseCellDate(v);
             if (!d || isNaN(d.getTime())) continue;
             const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
             const label = d.toLocaleString('en-AU', { month: 'short', year: 'numeric' });
-            const actualCol = col + 1;
-            const dealersWithData = rows.slice(2).filter(r => r[actualCol] && r[actualCol] !== '#N/A' && Number(r[actualCol]) !== 0).length;
+            const valueCol = col + 1;
+            const dealersWithData = rows.slice(dataStartRow)
+                .filter(r => r[valueCol] && r[valueCol] !== '#N/A' && Number(r[valueCol]) !== 0).length;
             months.push({ ym, label, col, dealersWithData });
-        } catch (_) { }
+        } catch (_) {}
     }
     return months;
+};
+
+// Returns a human-readable month label for any column — reads the correct header row
+const monthLabel = (rows, col) => {
+    const { headerRow } = detectLayout(rows);
+    const v = rows[headerRow] && rows[headerRow][col];
+    if (!v) return 'Latest';
+    try {
+        const d = parseCellDate(v);
+        if (d && !isNaN(d.getTime())) return d.toLocaleString('en-AU', { month: 'short', year: '2-digit' });
+    } catch (_) {}
+    return String(v);
 };
 
 const buildLookup = (rows, keyCol = 1) => {
@@ -736,27 +840,35 @@ const buildLookup = (rows, keyCol = 1) => {
     for (let i = 2; i < rows.length; i++) {
         const row = rows[i];
         if (!row || !row[0]) continue;
-        const key = clean(row[keyCol]);
+        const key     = clean(row[keyCol]);
         const nameKey = 'name:' + clean(row[0]).toLowerCase();
-        if (key && key !== '#N/A') map[key] = row;
-        if (nameKey !== 'name:') map[nameKey] = row;
+        const normKey = 'norm:' + normalizeDealer(row[0]);
+        if (key && key !== '#N/A') map[key]  = row;
+        if (nameKey !== 'name:')   map[nameKey] = row;
+        if (normKey !== 'norm:')   map[normKey] = row;
     }
     return map;
 };
 
-const lookup = (map, code, name) => {
+// 3-tier lookup: exact code → exact name → normalised name
+// sheet param is used only for logging — it does not affect matching
+const lookup = (map, code, name, sheet = '') => {
+    // Tier 1: exact dealer code
     if (code && code !== '#N/A' && map[code]) return map[code];
-    return map['name:' + (name || '').toLowerCase()] || null;
-};
-
-const monthLabel = (rows, col) => {
-    const v = rows[0] && rows[0][col];
-    if (!v) return 'Latest';
-    try {
-        const d = parseCellDate(v);
-        if (d && !isNaN(d.getTime())) return d.toLocaleString('en-AU', { month: 'short', year: '2-digit' });
-    } catch (_) { }
-    return String(v);
+    // Tier 2: exact name (case-insensitive)
+    const nameKey = 'name:' + (name || '').toLowerCase();
+    if (map[nameKey]) return map[nameKey];
+    // Tier 3: normalised name (strips Pty Ltd, punctuation, etc.)
+    const normKey = 'norm:' + normalizeDealer(name || '');
+    if (normKey !== 'norm:' && map[normKey]) {
+        console.info(`[match:fuzzy] "${name}" → normalised match${sheet ? ` in ${sheet}` : ''}`);
+        return map[normKey];
+    }
+    // No match — log so it's visible in Catalyst function logs
+    if (name || code) {
+        console.warn(`[match:miss] code="${code}" name="${name}"${sheet ? ` sheet=${sheet}` : ''}`);
+    }
+    return null;
 };
 
 // ──────────────────────────────────────────────
@@ -805,21 +917,35 @@ const parseScorecard = (base64Data, targetMonth = null) => {
     const buf = Buffer.from(base64Data, 'base64');
     const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
 
-    const sheetRows = (name) => {
-        const ws = wb.Sheets[name];
-        if (!ws) return [];
+    // Case-insensitive sheet lookup — tries each name in order, first match wins
+    const findSheet = (...names) => {
+        const available = wb.SheetNames.map(n => ({ key: n.toLowerCase().trim(), orig: n }));
+        for (const name of names) {
+            const needle = name.toLowerCase().trim();
+            const match = available.find(s => s.key === needle);
+            if (match && wb.Sheets[match.orig]) return wb.Sheets[match.orig];
+        }
+        return null;
+    };
+
+    const sheetRows = (...names) => {
+        const ws = findSheet(...names);
+        if (!ws) {
+            console.warn(`[parseScorecard] Sheet not found: ${names.join(' / ')}. Available: ${wb.SheetNames.join(', ')}`);
+            return [];
+        }
         return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
     };
 
-    const dealerListRows = sheetRows('DEALER LIST');
-    const salesRows = sheetRows('SALES');
-    const mktRows = sheetRows('MKT SHARE');
-    const stockRows = sheetRows('STOCK');
-    const partsRows = sheetRows('PARTS (2)');
-    const cxRows = sheetRows('SERVICE CX');
-    const googleRows = sheetRows('GOOGLE REVIEWS');
-    const ciRows = sheetRows('CI');
-    const dotyRows = sheetRows('DOTY');
+    const dealerListRows = sheetRows('DEALER LIST', 'Dealer List', 'dealer list');
+    const salesRows      = sheetRows('SALES', 'Sales');
+    const mktRows        = sheetRows('MKT SHARE', 'MKT Share', 'Market Share', 'MKT SHARE');
+    const stockRows      = sheetRows('STOCK', 'Stock');
+    const partsRows      = sheetRows('PARTS (2)', 'PARTS', 'Parts (2)', 'Parts', 'PARTS(2)', 'Parts(2)');
+    const cxRows         = sheetRows('SERVICE CX', 'Service CX', 'SERVICE CX', 'CX', 'SERVICECX');
+    const googleRows     = sheetRows('GOOGLE REVIEWS', 'Google Reviews', 'GOOGLE', 'Google');
+    const ciRows         = sheetRows('CI', 'Ci');
+    const dotyRows       = sheetRows('DOTY', 'Doty');
 
     const salesMap = buildLookup(salesRows);
     const mktMap = buildLookup(mktRows);
@@ -839,6 +965,8 @@ const parseScorecard = (base64Data, targetMonth = null) => {
 
     const dealers = [];
 
+    const mismatches = [];
+
     for (let i = 1; i < dealerListRows.length; i++) {
         const dl = dealerListRows[i];
         if (!dl || !dl[0]) continue;
@@ -849,33 +977,45 @@ const parseScorecard = (base64Data, targetMonth = null) => {
         const pma = clean(dl[3]);
         if (!name) continue;
 
-        const sRow = lookup(salesMap, code, name);
-        const mRow = lookup(mktMap, code, name);
-        const stRow = lookup(stockMap, code, name);
-        const pRow = lookup(partsMap, code, name);
-        const cxRow = lookup(cxMap, code, name);
-        const gRow = lookup(googleMap, code, name);
-        const ciRow = lookup(ciMap, code, name);
-        const dRow = lookup(dotyMap, code, name);
+        const sRow  = lookup(salesMap,   code, name, 'SALES');
+        const mRow  = lookup(mktMap,     code, name, 'MKT SHARE');
+        const stRow = lookup(stockMap,   code, name, 'STOCK');
+        const pRow  = lookup(partsMap,   code, name, 'PARTS');
+        const cxRow = lookup(cxMap,      code, name, 'SERVICE CX');
+        const gRow  = lookup(googleMap,  code, name, 'GOOGLE REVIEWS');
+        const ciRow = lookup(ciMap,      code, name, 'CI');
+        const dRow  = lookup(dotyMap,    code, name, 'DOTY');
+
+        // Collect sheets where this dealer had no match
+        const missed = [
+            !sRow  && 'SALES',
+            !pRow  && 'PARTS',
+            !cxRow && 'SERVICE CX',
+            !mRow  && 'MKT SHARE',
+            !gRow  && 'GOOGLE REVIEWS',
+            !ciRow && 'CI',
+            !dRow  && 'DOTY',
+        ].filter(Boolean);
+        if (missed.length) mismatches.push({ dealer: name, code, missingSheets: missed });
 
         dealers.push({
             dealer: { name, region, pma },
             meta: { recordId: code || String(i) },
             monthly: [{
                 month: monthLabel(salesRows, salesMonthCol),
-                sales: { target: num(sRow?.[salesMonthCol]), actual: num(sRow?.[salesMonthCol + 1]) },
-                market: { total: num(mRow?.[mktMonthCol]), mg: num(mRow?.[mktMonthCol + 1]) },
-                stock: { ice: num(stRow?.[stockMonthCol]), hev: num(stRow?.[stockMonthCol + 1]), bev: num(stRow?.[stockMonthCol + 2]) },
-                parts: { target: num(pRow?.[partsMonthCol]), actual: num(pRow?.[partsMonthCol + 1]) },
+                sales:   { target: num(sRow?.[salesMonthCol]),  actual: num(sRow?.[salesMonthCol + 1]) },
+                market:  { total:  num(mRow?.[mktMonthCol]),    mg:     num(mRow?.[mktMonthCol + 1]) },
+                stock:   { ice:    num(stRow?.[stockMonthCol]), hev:    num(stRow?.[stockMonthCol + 1]), bev: num(stRow?.[stockMonthCol + 2]) },
+                parts:   { target: num(pRow?.[partsMonthCol]),  actual: num(pRow?.[partsMonthCol + 1]) },
                 service: { response: yn(cxRow?.[cxMonthCol]), score: yn(cxRow?.[cxMonthCol + 1]), leadTime: yn(cxRow?.[cxMonthCol + 2]), training: yn(cxRow?.[cxMonthCol + 3]) },
-                google: { score: num(gRow?.[3]), responses: num(gRow?.[4]) },
-                ci: { status: clean(ciRow?.[2]) || 'No', pts: num(ciRow?.[3]) },
-                doty: { sales: num(dRow?.[3]), aftersales: num(dRow?.[4]), google: num(dRow?.[5]), ci: num(dRow?.[6]), total: num(dRow?.[7]) }
+                google:  { score: num(gRow?.[3]),  responses: num(gRow?.[4]) },
+                ci:      { status: clean(ciRow?.[2]) || 'No', pts: num(ciRow?.[3]) },
+                doty:    { sales: num(dRow?.[3]), aftersales: num(dRow?.[4]), google: num(dRow?.[5]), ci: num(dRow?.[6]), total: num(dRow?.[7]) }
             }]
         });
     }
 
-    return dealers;
+    return { dealers, mismatches };
 };
 
 
@@ -890,15 +1030,23 @@ app.post('/get-months', async (req, res) => {
         const buf = Buffer.from(fileData, 'base64');
         const wb = XLSX.read(buf, { type: 'buffer', cellDates: true });
 
-        const sheetRows = (name) => {
-            const ws = wb.Sheets[name];
+        const findSheet = (...names) => {
+            const available = wb.SheetNames.map(n => ({ key: n.toLowerCase().trim(), orig: n }));
+            for (const name of names) {
+                const match = available.find(s => s.key === name.toLowerCase().trim());
+                if (match && wb.Sheets[match.orig]) return wb.Sheets[match.orig];
+            }
+            return null;
+        };
+        const sheetRows = (...names) => {
+            const ws = findSheet(...names);
             if (!ws) return [];
             return XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
         };
 
-        const salesRows = sheetRows('SALES');
-        const cxRows = sheetRows('SERVICE CX');
-        const partsRows = sheetRows('PARTS (2)');
+        const salesRows = sheetRows('SALES', 'Sales');
+        const cxRows    = sheetRows('SERVICE CX', 'Service CX', 'CX');
+        const partsRows = sheetRows('PARTS (2)', 'PARTS', 'Parts (2)', 'Parts', 'PARTS(2)', 'Parts(2)');
 
         // Build union of all months that appear in Sales (primary source)
         const salesMonths = getAvailableMonths(salesRows, 2, 2).filter(m => m.dealersWithData > 0);
@@ -1002,8 +1150,8 @@ app.post('/process-scorecard', async (req, res) => {
         // 1. Parse — use targetMonth if provided
         const targetMonth = req.body.targetMonth || null;
         console.log('Parsing Excel for month:', targetMonth || 'latest');
-        const dealers = parseScorecard(fileData, targetMonth);
-        console.log(`Parsed ${dealers.length} dealers`);
+        const { dealers, mismatches } = parseScorecard(fileData, targetMonth);
+        console.log(`Parsed ${dealers.length} dealers, ${mismatches.length} match warnings`);
 
         // 2. Quality check — informational only, never blocks
         const quality = runQualityCheck(dealers);
@@ -1049,13 +1197,15 @@ app.post('/process-scorecard', async (req, res) => {
             );
         }
 
-        // 6. Return result with quality report and the dashboard link
+        // 6. Return result with quality report, match warnings, and the dashboard link
         return res.status(200).json({
             message: 'Success',
             dealerCount: dealers.length,
             scorecardId: base,
             targetMonth: targetMonth || dealers[0]?.monthly?.[0]?.month || 'Latest',
-            quality: quality.summary
+            quality: quality.summary,
+            mismatches: mismatches.length ? mismatches : undefined,
+            matchWarningCount: mismatches.length || undefined,
         });
 
     } catch (err) {
@@ -1090,8 +1240,10 @@ app.post('/process-all-months', async (req, res) => {
 
         // 2. Parse each month and measure quality
         const monthlyDataSets = [];
+        const allMismatches = [];
         for (const month of salesMonths) {
-            const dealers = parseScorecard(fileData, month.ym);
+            const { dealers, mismatches } = parseScorecard(fileData, month.ym);
+            allMismatches.push(...mismatches);
             const q = runQualityCheck(dealers);
             const keyFields = ['sales_actual', 'sales_target', 'parts_actual', 'cx_score', 'mkt_total'];
             const avgCov = keyFields.reduce((s, f) => s + (q.summary[f]?.pct || 0), 0) / keyFields.length;
@@ -1172,6 +1324,14 @@ app.post('/process-all-months', async (req, res) => {
         }
 
         const quality = runQualityCheck(mergedDealers);
+        // Deduplicate mismatches across months (same dealer missing same sheet)
+        const seenMismatch = new Set();
+        const uniqueMismatches = allMismatches.filter(m => {
+            const key = `${m.code}|${m.dealer}|${m.missingSheets.join(',')}`;
+            if (seenMismatch.has(key)) return false;
+            seenMismatch.add(key);
+            return true;
+        });
         return res.status(200).json({
             message: 'Success',
             dealerCount: mergedDealers.length,
@@ -1179,7 +1339,9 @@ app.post('/process-all-months', async (req, res) => {
             monthCount: salesMonths.length,
             coverage: overallCov,
             months: monthlyDataSets.map(m => ({ ym: m.ym, label: m.label, coverage: Math.round(m.avgCov) })),
-            quality: quality.summary
+            quality: quality.summary,
+            mismatches: uniqueMismatches.length ? uniqueMismatches : undefined,
+            matchWarningCount: uniqueMismatches.length || undefined,
         });
 
     } catch (err) {
@@ -1196,8 +1358,8 @@ const mailer = nodemailer.createTransport({
     port:   465,
     secure: true,
     auth: {
-        user: process.env.SMTP_USER || 'sherlockloke@gmail.com',
-        pass: process.env.SMTP_PASS || 'ryvm bvoa rfnv npxt',
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
     },
 });
 
@@ -1211,7 +1373,7 @@ app.post('/send-email', async (req, res) => {
         if (!dealers) return res.status(400).json({ error: 'No dealer data provided' });
 
         const sendFormat   = format === 'pdf' ? 'pdf' : 'link';
-        const baseUrl      = 'https://mg-motor-au-re-60060703876.development.catalystserverless.in';
+        const baseUrl      = BASE_URL;
         // Link points to the specific scorecard dashboard, not the generic app root
         const dashboardUrl = recordId
             ? `${baseUrl}/app/${recordId}`
@@ -1447,7 +1609,7 @@ app.post('/send-email', async (req, res) => {
             : [];
 
         await mailer.sendMail({
-            from: '"MG Motor Network" <sherlockloke@gmail.com>',
+            from: `"MG Motor Network" <${process.env.SMTP_USER}>`,
             to, subject: finalSubject, html, text: plainText, attachments,
         });
 
@@ -1497,8 +1659,6 @@ app.post('/ask-stream', async (req, res) => {
 
         if (!question) { send({ error: 'No question provided' }); return res.end(); }
         if (!dealers || !dealers.length) { send({ error: 'No dealer data provided' }); return res.end(); }
-
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBUh0n4zBjKJZ7qz34zxZ7o0LqyQGZ3jBA';
 
         const dashSummary = buildDataSummary(dealers, dashboardMonth || 'current');
 
@@ -1574,7 +1734,7 @@ CRITICAL RULES:
         contents.push({ role: 'user', parts: [{ text: question }] });
 
         const geminiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1665,8 +1825,6 @@ app.post('/ask', async (req, res) => {
 
         if (!question) return res.status(400).json({ error: 'No question provided' });
         if (!dealers || !dealers.length) return res.status(400).json({ error: 'No dealer data provided' });
-
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyBUh0n4zBjKJZ7qz34zxZ7o0LqyQGZ3jBA';
 
         // Build current dashboard month summary
         const dashSummary = buildDataSummary(dealers, dashboardMonth || 'current');
@@ -1779,7 +1937,7 @@ actions: [{"type":"visualize","spec":{"title":"Market Share by Region","panels":
         contents.push({ role: 'user', parts: [{ text: question }] });
 
         const geminiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -2033,7 +2191,7 @@ app.get('/pinned-viz', async (req, res) => {
     }
 });
 
-app.post('/pinned-viz', async (req, res) => {
+app.post('/pinned-viz', requireCatalystAdmin, async (req, res) => {
     try {
         const { id, spec } = req.body;
         if (!id || !spec) return res.status(400).json({ error: 'Missing id or spec' });
@@ -2049,7 +2207,7 @@ app.post('/pinned-viz', async (req, res) => {
     }
 });
 
-app.delete('/pinned-viz', async (req, res) => {
+app.delete('/pinned-viz', requireCatalystAdmin, async (req, res) => {
     try {
         const id = req.query?.id;
         if (!id) return res.status(400).json({ error: 'Missing id' });
@@ -2057,6 +2215,39 @@ app.delete('/pinned-viz', async (req, res) => {
         const zcql = catalystApp.zcql();
         const key = `${id}_pinned_viz`;
         await zcql.executeZCQLQuery(`DELETE FROM dashboard_data WHERE record_id = '${key}'`);
+        return res.json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// ──────────────────────────────────────────────
+// GET  /config  — return dashboard label config (public read)
+// POST /config  — save label config (admin only)
+// ──────────────────────────────────────────────
+app.get('/config', async (req, res) => {
+    try {
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const rows = await zcql.executeZCQLQuery(
+            "SELECT data FROM dashboard_data WHERE record_id = 'LABEL_CONFIG' LIMIT 1"
+        );
+        const row = (rows || [])[0];
+        const raw = row?.dashboard_data?.data || row?.DASHBOARD_DATA?.data;
+        return res.json(raw ? JSON.parse(raw) : {});
+    } catch (_) {
+        return res.json({});
+    }
+});
+
+app.post('/config', requireCatalystAdmin, async (req, res) => {
+    try {
+        const catalystApp = catalyst.initialize(req);
+        const zcql = catalystApp.zcql();
+        const esc = JSON.stringify(req.body).replace(/'/g, "''");
+        // ZCQL doesn't support UPDATE with WHERE on string fields — use DELETE + INSERT
+        try { await zcql.executeZCQLQuery("DELETE FROM dashboard_data WHERE record_id = 'LABEL_CONFIG'"); } catch (_) {}
+        await zcql.executeZCQLQuery(`INSERT INTO dashboard_data (record_id, data) VALUES ('LABEL_CONFIG', '${esc}')`);
         return res.json({ success: true });
     } catch (err) {
         return res.status(500).json({ error: err.message });

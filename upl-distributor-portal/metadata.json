@@ -1,0 +1,6 @@
+{
+  "name": "UPL Distributor Portal",
+  "description": "A management portal for UPL's distributors featuring dashboard, orders, invoices, and GRM management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

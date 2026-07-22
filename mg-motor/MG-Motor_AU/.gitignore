@@ -1,0 +1,13 @@
+# Environment variables — never commit
+.env
+**/.env
+
+# OS
+.DS_Store
+
+# Node
+node_modules/
+**/node_modules/
+
+# Build artifacts
+react-app/build/

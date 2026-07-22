@@ -2,7 +2,7 @@ const catalyst = require("zcatalyst-sdk-node");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Replace with your actual Gemini API Key
-const genAI = new GoogleGenerativeAI("YOUR_GEMINI_API_KEY");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).send({ error: "Method Not Allowed" });
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     if (!fileData) return res.status(400).send({ error: "No file data received." });
 
     // 1. Initialize Gemini 1.5 Pro (Required for massive file processing)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_SCORECARD_MODEL || "gemini-3.1-flash-lite" });
 
     // 2. The Ultimate Extraction Prompt
     const prompt = `
