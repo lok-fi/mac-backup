@@ -4,7 +4,7 @@
 		"stack": "node20",
 		"type": "advancedio",
 		"env_variables": {
-			"GEMINI_API_KEY": "AIzaSyD9yr6Wixjx7_0BNSTUPEjIoAX_f-dfcMk"
+			"GEMINI_API_KEY": ""
 		}
 	},
 	"execution": {
